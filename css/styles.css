@@ -1,0 +1,645 @@
+/* ==================================================================
+   Daily Dose Coffee Roasters — link tree
+   ------------------------------------------------------------------
+   Phone-first. The printed booklet is the design system: cream paper,
+   green ink, LeMonde Livre italic display, hand-drawn markers.
+
+   Light is the default. Dark mode is opt-in via the toggle and swaps
+   the paper for a warm charcoal — deliberately not green, so the
+   booklet-green cover panel and the orange accents still read.
+   ================================================================== */
+
+/* ------------------------------------------------------------------ *
+   1. Fonts (self-hosted — the page makes no third-party requests)
+ * ------------------------------------------------------------------ */
+@font-face {
+  font-family: 'LeMonde';
+  src: url('../assets/fonts/LeMondeLivre-Normal.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'LeMonde';
+  src: url('../assets/fonts/LeMondeLivre-Italic.woff2') format('woff2');
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'LeMonde';
+  src: url('../assets/fonts/LeMondeLivre-SemiBold.woff2') format('woff2');
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Figtree';
+  src: url('../assets/fonts/Figtree.woff2') format('woff2');
+  font-weight: 300 900; font-style: normal; font-display: swap;
+}
+
+/* ------------------------------------------------------------------ *
+   2. Tokens
+ * ------------------------------------------------------------------ */
+:root {
+  /* brand ink, sampled from the source artwork */
+  --paper:    #F2F0E2;
+  --ink:      #1B582C;
+  --ink-deep: #1C4425;   /* the booklet cover green */
+  --orange:   #F68F43;
+  --matcha:   #75A03F;
+  --gold:     #CD8331;
+
+  /* semantic — the dark block below remaps these */
+  --bg:        var(--paper);
+  --surface:   #F8F6EA;
+  --fg:        var(--ink);
+  --fg-soft:   color-mix(in srgb, var(--ink) 66%, var(--paper));
+  --fg-faint:  color-mix(in srgb, var(--ink) 40%, var(--paper));
+  --rule:      color-mix(in srgb, var(--ink) 18%, var(--paper));
+  --rule-firm: color-mix(in srgb, var(--ink) 38%, var(--paper));
+  --shadow:    color-mix(in srgb, var(--ink) 16%, transparent);
+
+  --col:      30rem;   /* home column */
+  --col-wide: 38rem;   /* menu column */
+  --r:    1.25rem;
+  --r-sm: .75rem;
+
+  --pad: 1.15rem;
+  --ease: cubic-bezier(.22, .61, .36, 1);
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+}
+
+/* Opt-in dark mode. Warm charcoal rather than a second green, so the
+   green cover and the orange accents stay distinguishable. */
+:root[data-theme='dark'] {
+  --bg:        #1A1917;
+  --surface:   #24231F;
+  --fg:        var(--paper);
+  --fg-soft:   color-mix(in srgb, var(--paper) 72%, #1A1917);
+  --fg-faint:  color-mix(in srgb, var(--paper) 46%, #1A1917);
+  --rule:      color-mix(in srgb, var(--paper) 16%, #1A1917);
+  --rule-firm: color-mix(in srgb, var(--paper) 36%, #1A1917);
+  --shadow:    rgba(0, 0, 0, .5);
+  --orange:    #FBA45E;
+  --gold:      #E0A055;
+}
+
+/* ------------------------------------------------------------------ *
+   3. Reset & base
+ * ------------------------------------------------------------------ */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  transition: background-color .4s var(--ease), color .4s var(--ease);
+}
+body.is-locked { overflow: hidden; }
+
+/* Images always keep their intrinsic proportions: the width/height
+   attributes supply the ratio, `height:auto` makes the browser honour
+   it. Nothing here can stretch artwork. */
+img { display: block; max-width: 100%; height: auto; }
+svg { display: block; }
+
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+button:disabled { opacity: .32; cursor: default; }
+a { color: inherit; text-decoration: none; }
+
+:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; border-radius: .35rem; }
+
+.skip {
+  position: fixed; top: -100px; left: 50%; z-index: 99;
+  transform: translateX(-50%);
+  padding: .7rem 1.1rem; border-radius: 0 0 .8rem .8rem;
+  background: var(--fg); color: var(--bg);
+  font-size: .8rem; font-weight: 600;
+}
+.skip:focus { top: 0; }
+
+/* paper grain — keeps flat colour from reading as "digital" */
+.grain {
+  position: fixed; inset: -20%;
+  z-index: 0; pointer-events: none;
+  opacity: .32; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+:root[data-theme='dark'] .grain { mix-blend-mode: screen; opacity: .07; }
+
+.app { position: relative; z-index: 1; padding-bottom: calc(4rem + env(safe-area-inset-bottom)); }
+.app:focus { outline: none; }
+
+.nums { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1; }
+.ico { flex: none; }
+.ico--orange { color: var(--orange); }
+.ico--gold   { color: var(--gold); }
+
+/* ------------------------------------------------------------------ *
+   4. Entrance choreography
+ * ------------------------------------------------------------------ */
+@keyframes rise {
+  from { opacity: 0; transform: translate3d(0, 1.1rem, 0); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-1.2deg); }
+  50%      { transform: translateY(-.45rem) rotate(1.2deg); }
+}
+
+.rise {
+  animation: rise .62s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 62ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .rise, .cover__row, .cover__poem, .cover__foot { animation: fade .01s both; }
+  .mascot { animation: none; }
+}
+
+/* ------------------------------------------------------------------ *
+   5. Cover — the booklet front, rebuilt
+      Always the brand green, in both themes, so the artwork sitting on
+      it is always the cream-ink version.
+ * ------------------------------------------------------------------ */
+.cover {
+  position: relative;
+  background: var(--ink-deep);
+  color: var(--paper);
+  border-radius: 0 0 var(--r) var(--r);
+  overflow: hidden;
+  isolation: isolate;
+}
+.cover::before {
+  content: '';
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(ellipse 70% 50% at 108% -8%,
+      color-mix(in srgb, var(--matcha) 26%, transparent), transparent 70%),
+    radial-gradient(ellipse 60% 45% at -12% 104%,
+      color-mix(in srgb, var(--orange) 20%, transparent), transparent 70%);
+}
+.cover__in {
+  width: 100%; max-width: var(--col);
+  margin-inline: auto;
+  padding: calc(2.3rem + env(safe-area-inset-top)) var(--pad) 1.8rem;
+}
+
+.cover__type {
+  display: flex; flex-direction: column; gap: .1em;
+  font-family: 'LeMonde', serif; font-weight: 400;
+  /* sized so the longest row keeps a margin inside the gutters at 320px */
+  font-size: clamp(1.85rem, 11.1vw, 3.3rem);
+  line-height: .98; letter-spacing: .012em;
+  text-transform: uppercase;
+}
+.cover__row {
+  display: flex; align-items: center; gap: .26em; min-width: 0;
+  animation: rise .8s var(--ease-out) both;
+  animation-delay: calc(var(--i) * 110ms);
+}
+.cover__row--3 { justify-content: flex-end; }
+.cover__mark { flex: none; width: .9em; height: .9em; }
+.cover__mark svg { width: 100%; height: 100%; }
+
+.cover__poem {
+  margin-top: 1.8rem;
+  font-family: 'LeMonde', serif; font-style: italic;
+  font-size: clamp(.9rem, 3.8vw, 1rem); line-height: 1.5;
+  color: color-mix(in srgb, var(--paper) 84%, var(--ink-deep));
+  animation: rise .8s var(--ease-out) both .5s;
+}
+.cover__poem span { display: block; }
+
+.cover__foot {
+  margin-top: 1.9rem;
+  display: flex; align-items: flex-end; gap: 1rem;
+  animation: rise .8s var(--ease-out) both .62s;
+}
+.cover__brand { flex: 1 1 auto; min-width: 0; }
+.logo { width: min(12rem, 100%); }
+.cover__kicker {
+  display: block; margin-top: .38rem;
+  font-size: .625rem; font-weight: 600;
+  letter-spacing: .32em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--paper) 64%, var(--ink-deep));
+}
+.mascot {
+  flex: none;
+  width: clamp(4.6rem, 22vw, 6.4rem);
+  transform-origin: 60% 90%;
+  animation: bob 7s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------------------ *
+   6. Shell
+ * ------------------------------------------------------------------ */
+.wrap {
+  width: 100%; max-width: var(--col);
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+.wrap--wide { max-width: var(--col-wide); }
+.stack { display: flex; flex-direction: column; }
+
+.about {
+  margin-top: 1.8rem;
+  font-family: 'LeMonde', serif; font-style: italic;
+  font-size: .96rem; line-height: 1.55;
+  text-align: center; text-wrap: pretty;
+  color: var(--fg-soft);
+}
+
+/* ------------------------------------------------------------------ *
+   7. Link rows (home)
+ * ------------------------------------------------------------------ */
+.links { gap: .7rem; margin-top: 1.9rem; }
+
+.link {
+  position: relative;
+  display: flex; align-items: center; gap: .95rem;
+  width: 100%; padding: .95rem 1.05rem;
+  border: 1.5px solid var(--rule-firm);
+  border-radius: var(--r);
+  text-align: left; overflow: hidden; isolation: isolate;
+  transition: border-color .3s var(--ease), color .3s var(--ease),
+              transform .18s var(--ease);
+}
+/* ink wash sweeps in, text flips to paper */
+.link::before {
+  content: '';
+  position: absolute; inset: 0; z-index: -1;
+  background: var(--fg);
+  transform: translateX(-101%);
+  transition: transform .42s var(--ease-out);
+}
+.link:hover, .link:focus-visible { border-color: var(--fg); color: var(--bg); }
+.link:hover::before, .link:focus-visible::before { transform: none; }
+.link:active { transform: scale(.985); }
+.link:hover .link__sub, .link:focus-visible .link__sub {
+  color: color-mix(in srgb, var(--bg) 78%, var(--fg));
+}
+.link:hover .ico, .link:focus-visible .ico { color: var(--bg); }
+
+.link__ico { width: 1.75rem; height: 1.75rem; }
+.link__ico svg { width: 100%; height: 100%; }
+.link__txt { flex: 1 1 auto; min-width: 0; }
+.link__label { display: block; font-size: 1.0625rem; font-weight: 700; letter-spacing: -.005em; }
+.link__sub {
+  display: block; margin-top: .1rem;
+  font-family: 'LeMonde', serif; font-style: italic;
+  font-size: .8125rem; line-height: 1.35;
+  color: var(--fg-soft);
+  transition: color .3s var(--ease);
+}
+.link__go {
+  flex: none; width: 1.15rem; height: 1.15rem; opacity: .5;
+  transition: transform .32s var(--ease-out), opacity .3s var(--ease);
+}
+.link__go svg { width: 100%; height: 100%; }
+.link:hover .link__go, .link:focus-visible .link__go { transform: translateX(.28rem); opacity: 1; }
+
+/* ------------------------------------------------------------------ *
+   8. Socials + sign-off
+ * ------------------------------------------------------------------ */
+.socials { display: flex; justify-content: center; gap: .8rem; margin-top: 1.9rem; }
+.social {
+  display: grid; place-items: center;
+  width: 3.1rem; height: 3.1rem;
+  border: 1.5px solid var(--rule-firm); border-radius: 50%;
+  transition: background-color .3s var(--ease), color .3s var(--ease),
+              border-color .3s var(--ease), transform .22s var(--ease);
+}
+.social svg { width: 1.35rem; height: 1.35rem; }
+.social:hover, .social:focus-visible {
+  background: var(--fg); color: var(--bg); border-color: var(--fg);
+  transform: translateY(-2px);
+}
+.handle {
+  margin-top: .85rem; text-align: center;
+  font-size: .78rem; letter-spacing: .03em; color: var(--fg-faint);
+}
+.signoff {
+  margin-top: 2.6rem; text-align: center;
+  font-family: 'LeMonde', serif; font-style: italic;
+  font-size: .9rem; line-height: 1.6; color: var(--fg-faint);
+}
+.signoff strong { display: block; font-weight: 600; font-style: normal; letter-spacing: .01em; }
+
+/* ------------------------------------------------------------------ *
+   9. Sub-page header
+ * ------------------------------------------------------------------ */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  border-bottom: 1px solid transparent;
+  transition: border-color .3s var(--ease), box-shadow .3s var(--ease);
+}
+.topbar.is-stuck {
+  border-bottom-color: var(--rule);
+  box-shadow: 0 .6rem 1.4rem -1rem var(--shadow);
+}
+.topbar__in {
+  display: flex; align-items: center; gap: .7rem;
+  min-height: 3.6rem;
+  padding-top: env(safe-area-inset-top);
+}
+.topbar__title { flex: 1 1 auto; min-width: 0; }
+.topbar__title b {
+  display: block; font-size: .95rem; font-weight: 700; letter-spacing: -.005em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.topbar__title span {
+  display: block;
+  font-family: 'LeMonde', serif; font-style: italic;
+  font-size: .75rem; color: var(--fg-faint);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.iconbtn {
+  display: grid; place-items: center; flex: none;
+  width: 2.6rem; height: 2.6rem;
+  border-radius: 50%; border: 1.5px solid var(--rule);
+  transition: background-color .25s var(--ease), color .25s var(--ease),
+              border-color .25s var(--ease);
+}
+.iconbtn svg { width: 1.05rem; height: 1.05rem; }
+.iconbtn:hover, .iconbtn:focus-visible {
+  background: var(--fg); color: var(--bg); border-color: var(--fg);
+}
+.iconbtn--onDark {
+  border-color: color-mix(in srgb, var(--paper) 34%, transparent);
+  color: var(--paper);
+}
+.iconbtn--onDark:hover, .iconbtn--onDark:focus-visible {
+  background: var(--paper); color: var(--ink-deep); border-color: var(--paper);
+}
+
+.pagehead { padding-top: 2rem; }
+.pagehead__title {
+  font-family: 'LeMonde', serif; font-style: italic;
+  font-size: clamp(2rem, 9vw, 2.6rem); line-height: 1.05;
+}
+.pagehead__lede {
+  margin-top: .6rem;
+  font-family: 'LeMonde', serif; font-style: italic;
+  font-size: .92rem; color: var(--fg-soft); text-wrap: pretty;
+}
+
+/* ------------------------------------------------------------------ *
+   10. Branch cards
+ * ------------------------------------------------------------------ */
+.region { display: flex; align-items: center; gap: .8rem; margin: 2.1rem 0 .9rem; }
+.region__name { font-family: 'LeMonde', serif; font-style: italic; font-size: 1.28rem; }
+.region__rule { flex: 1 1 auto; height: 1px; background: var(--rule); }
+.region__count { font-size: .72rem; color: var(--fg-faint); letter-spacing: .06em; }
+
+.branch {
+  display: flex; align-items: center; gap: .9rem;
+  width: 100%; padding: 1.05rem;
+  border: 1.5px solid var(--rule); border-radius: var(--r);
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  text-align: left;
+  transition: border-color .28s var(--ease), transform .18s var(--ease),
+              background-color .28s var(--ease);
+}
+.branch + .branch { margin-top: .65rem; }
+.branch:hover, .branch:focus-visible {
+  border-color: var(--rule-firm);
+  background: var(--surface);
+  transform: translateY(-2px);
+}
+.branch:active { transform: scale(.99); }
+.branch__ico { flex: none; width: 1.6rem; height: 1.6rem; }
+.branch__ico svg { width: 100%; height: 100%; }
+.branch__name {
+  flex: 1 1 auto; min-width: 0;
+  font-size: .84rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .085em;
+}
+.branch__go { flex: none; width: 1.05rem; height: 1.05rem; opacity: .45; }
+.branch__go svg { width: 100%; height: 100%; }
+.branch:hover .branch__go { opacity: .9; }
+
+/* locations: name, then two actions */
+.loc { display: block; }
+.loc:hover { transform: none; }
+.loc__head { display: flex; align-items: center; gap: .9rem; }
+.loc__acts { display: flex; gap: .5rem; margin-top: .9rem; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: .42rem; flex: 1 1 auto;
+  min-height: 2.6rem; padding: .6rem .9rem;
+  border: 1.5px solid var(--rule-firm); border-radius: 999px;
+  font-size: .78rem; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase;
+  transition: background-color .25s var(--ease), color .25s var(--ease),
+              border-color .25s var(--ease), transform .18s var(--ease);
+}
+.btn svg { width: .95rem; height: .95rem; }
+.btn:hover, .btn:focus-visible { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.btn:active { transform: scale(.97); }
+.btn--solid { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.btn--solid:hover, .btn--solid:focus-visible { background: transparent; color: var(--fg); }
+
+/* ------------------------------------------------------------------ *
+   11. Menu — the original artwork, page by page
+ * ------------------------------------------------------------------ */
+.menuhint {
+  display: flex; align-items: center; gap: .45rem;
+  padding-top: 1.4rem;
+  font-family: 'LeMonde', serif; font-style: italic;
+  font-size: .86rem; color: var(--fg-faint);
+}
+.menuhint svg { flex: none; width: 1.05rem; height: 1.05rem; }
+
+.pages { display: flex; flex-direction: column; gap: .9rem; margin-top: 1rem; }
+
+.page {
+  position: relative; display: block; width: 100%; padding: 0;
+  border: 1px solid var(--rule); border-radius: var(--r-sm);
+  overflow: hidden; background: var(--surface);
+  box-shadow: 0 .5rem 1.4rem -1rem var(--shadow);
+  transition: transform .22s var(--ease), box-shadow .28s var(--ease),
+              border-color .28s var(--ease);
+  animation: fade .5s var(--ease) both;
+}
+.page img { width: 100%; }
+.page:hover, .page:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--rule-firm);
+  box-shadow: 0 1rem 2rem -1rem var(--shadow);
+}
+.page:active { transform: scale(.995); }
+.page__no {
+  position: absolute; right: .55rem; bottom: .55rem;
+  min-width: 1.55rem; padding: .12rem .4rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ink-deep) 74%, transparent);
+  color: var(--paper);
+  font-size: .68rem; font-weight: 600; text-align: center;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* floating page counter */
+.pagepill {
+  position: fixed; z-index: 25;
+  left: 50%; transform: translateX(-50%);
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  padding: .4rem .85rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--paper) 22%, transparent);
+  background: color-mix(in srgb, var(--ink-deep) 84%, transparent);
+  color: var(--paper);
+  font-size: .75rem; font-weight: 600; letter-spacing: .04em;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ *
+   12. Full-screen page viewer
+ * ------------------------------------------------------------------ */
+.lb {
+  position: fixed; inset: 0; z-index: 60;
+  display: flex; flex-direction: column;
+  background: #14150F;
+}
+.lb[hidden] { display: none; }
+/* The overlay never animates its own opacity, so a stalled animation
+   clock can't leave the artwork invisible. Only the page art moves, and
+   its worst case is a 1.5% scale. The script hides the node on close
+   regardless of whether the fade runs. */
+.lb.is-closing { animation: lbOut .18s var(--ease) forwards; }
+@keyframes lbOut { from { opacity: 1; } to { opacity: 0; } }
+.lb:not([hidden]) .lb__img { animation: lbPop .28s var(--ease-out); }
+@keyframes lbPop { from { transform: scale(.985); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .lb.is-closing, .lb:not([hidden]) .lb__img { animation: none; }
+}
+
+.lb__bar {
+  flex: none;
+  display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+  padding: calc(.7rem + env(safe-area-inset-top)) .8rem .7rem;
+  color: var(--paper);
+}
+.lb__count { font-size: .82rem; font-weight: 600; letter-spacing: .06em; opacity: .85; }
+.lb__tools { display: flex; gap: .45rem; }
+.lb__bar .iconbtn { width: 2.4rem; height: 2.4rem; }
+
+.lb__scroll {
+  flex: 1 1 auto;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  display: grid; place-content: center;
+  padding: .75rem;
+}
+/* fit the whole page by default; zooming switches to a pannable canvas */
+.lb__img {
+  width: auto; height: auto;
+  max-width: 100%;
+  max-height: calc(100dvh - 8rem);
+  border-radius: .4rem;
+  cursor: zoom-in;
+  background: var(--paper);
+}
+.lb__scroll.is-zoomed { place-content: start center; }
+.lb__scroll.is-zoomed .lb__img {
+  width: calc(var(--z, 1) * (100vw - 1.5rem));
+  max-width: none; max-height: none;
+  cursor: zoom-out;
+}
+
+.lb__nav {
+  position: absolute; top: 50%; z-index: 2;
+  transform: translateY(-50%);
+  display: grid; place-items: center;
+  width: 2.8rem; height: 2.8rem;
+  border-radius: 50%;
+  border: 1.5px solid color-mix(in srgb, var(--paper) 26%, transparent);
+  background: color-mix(in srgb, #14150F 72%, transparent);
+  color: var(--paper);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background-color .25s var(--ease), transform .2s var(--ease);
+}
+.lb__nav svg { width: 1.1rem; height: 1.1rem; }
+.lb__nav--prev { left: .6rem; }
+.lb__nav--next { right: .6rem; }
+.lb__nav:hover { background: var(--paper); color: #14150F; }
+.lb__nav:active { transform: translateY(-50%) scale(.94); }
+
+/* ------------------------------------------------------------------ *
+   13. Theme toggle
+ * ------------------------------------------------------------------ */
+.theme-toggle {
+  position: fixed; z-index: 30;
+  right: max(.9rem, env(safe-area-inset-right));
+  bottom: calc(.9rem + env(safe-area-inset-bottom));
+  width: 2.75rem; height: 2.75rem;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1.5px solid var(--rule-firm);
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform .22s var(--ease), border-color .25s var(--ease);
+}
+.theme-toggle:hover { transform: scale(1.06); border-color: var(--fg); }
+.theme-toggle:active { transform: scale(.95); }
+.theme-toggle__track { position: relative; width: 1.15rem; height: 1.15rem; }
+.theme-toggle__sun, .theme-toggle__moon {
+  position: absolute; inset: 0;
+  transition: opacity .3s var(--ease), transform .4s var(--ease-out);
+}
+.theme-toggle__sun {
+  border-radius: 50%; border: 1.6px solid currentColor;
+  background: radial-gradient(circle, currentColor 0 32%, transparent 33%);
+}
+.theme-toggle__moon {
+  border-radius: 50%;
+  box-shadow: inset -.34rem -.06rem 0 0 currentColor;
+  opacity: 0; transform: rotate(-40deg) scale(.7);
+}
+:root[data-theme='dark'] .theme-toggle__sun { opacity: 0; transform: rotate(40deg) scale(.7); }
+:root[data-theme='dark'] .theme-toggle__moon { opacity: 1; transform: none; }
+
+/* ------------------------------------------------------------------ *
+   14. Route transition
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) { animation: vtOut .2s var(--ease) both; }
+  ::view-transition-new(root) { animation: vtIn .3s var(--ease-out) both; }
+}
+@keyframes vtOut { to { opacity: 0; transform: translateY(-.5rem); } }
+@keyframes vtIn { from { opacity: 0; transform: translateY(.85rem); } }
+
+/* ------------------------------------------------------------------ *
+   15. Wider screens
+ * ------------------------------------------------------------------ */
+@media (min-width: 34rem) {
+  :root { --pad: 1.6rem; }
+  .cover { border-radius: 0 0 1.9rem 1.9rem; }
+  .lb__scroll.is-zoomed .lb__img { width: calc(var(--z, 1) * (100vw - 3rem)); }
+}
+@media (min-width: 60rem) {
+  .cover { margin-top: 1.6rem; border-radius: 1.9rem; max-width: var(--col); margin-inline: auto; }
+  .lb__scroll.is-zoomed .lb__img { width: calc(var(--z, 1) * min(100vw - 3rem, 60rem)); }
+}
+
+@media print {
+  .theme-toggle, .topbar, .grain, .skip, .pagepill, .lb, .menuhint { display: none !important; }
+  .page { break-inside: avoid; border: 0; box-shadow: none; }
+}

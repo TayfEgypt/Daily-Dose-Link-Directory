@@ -1,0 +1,15 @@
+# Local editor / agent settings
+.claude/settings.local.json
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python bytecode from tools/
+__pycache__/
+*.py[cod]
+
+# Node, if a tool is ever added
+node_modules/
+npm-debug.log*
