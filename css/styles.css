@@ -555,7 +555,13 @@ a { color: inherit; text-decoration: none; }
   cursor: zoom-in;
   background: var(--paper);
 }
-.lb__scroll.is-zoomed { place-content: start center; }
+/* Once zoomed the page is always wider and taller than the container, so
+   align it to the start rather than centring it. A centred item that
+   overflows its scroll container cannot be scrolled back past the start
+   edge — that overflow is simply unreachable — which made panning left
+   dead-end halfway. The script re-centres scrollLeft after each zoom
+   change, so the page still opens centred and pans both ways. */
+.lb__scroll.is-zoomed { place-content: start start; }
 .lb__scroll.is-zoomed .lb__img {
   width: calc(var(--z, 1) * (100vw - 1.5rem));
   max-width: none; max-height: none;

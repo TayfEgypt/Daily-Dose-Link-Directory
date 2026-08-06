@@ -333,11 +333,29 @@
     let closeTimer = null;
 
     function setZoom(z) {
+      const wasZoomed = zoom > 1;
+      /* Where the reader is looking, as a fraction of the whole page, so
+         the same spot stays put across a zoom change. */
+      const fx = scroll.scrollWidth > scroll.clientWidth
+        ? (scroll.scrollLeft + scroll.clientWidth / 2) / scroll.scrollWidth
+        : 0.5;
+      const fy = scroll.scrollHeight > scroll.clientHeight
+        ? (scroll.scrollTop + scroll.clientHeight / 2) / scroll.scrollHeight
+        : 0.5;
+
       zoom = Math.min(4, Math.max(1, z));
       scroll.style.setProperty('--z', zoom);
       scroll.classList.toggle('is-zoomed', zoom > 1);
       lb.querySelector('#lbOut').disabled = zoom <= 1;
       lb.querySelector('#lbIn').disabled = zoom >= 4;
+
+      /* Reading scrollWidth flushes the new layout, so no frame callback
+         is needed. Zooming in from the fitted view starts at the top of
+         the page; deeper zoom steps hold the reader's focal point. */
+      scroll.scrollLeft = fx * scroll.scrollWidth - scroll.clientWidth / 2;
+      if (wasZoomed) {
+        scroll.scrollTop = fy * scroll.scrollHeight - scroll.clientHeight / 2;
+      }
     }
 
     function show(i) {
