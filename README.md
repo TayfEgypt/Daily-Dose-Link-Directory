@@ -107,23 +107,6 @@ Everything routine is in **`js/data.js`**:
 
 ---
 
-## Hero variants — pick one, then prune
-
-`js/app.js` currently ships three hero treatments so they can be compared in
-place. Append the query to the URL:
-
-| URL | Treatment |
-|---|---|
-| `?hero=band` (default) | Slim green band, logo and mascot side by side — smallest footprint |
-| `?hero=cream` | No green panel at all; large green logo centred on cream |
-| `?hero=cover` | Generous green cover, logo centred with the mascot beneath |
-
-All three show only the logo, kicker and mascot — the booklet tagline and poem
-were removed. Once one is chosen, keep its function in `app.js`, delete the
-other two along with their `.hero--*` blocks in the CSS, and drop the
-`heroChoice()` switch. The unused `logo-green.webp` / `mascot-green.webp` (or
-the cream pair) can go too, depending on which survives.
-
 ## Design notes
 
 The printed booklet is the design system, so the site reads as the same object:
@@ -132,12 +115,14 @@ type.
 
 - **Colours** are sampled from the source artwork: paper `#F2F0E2`, ink
   `#1B582C`, cover green `#1C4425`, orange `#F68F43`.
-- **Green panels are always the booklet green**, in both themes — which is why
-  the logo and mascot placed on them use the cream-ink artwork. A green logo on
-  a green panel disappears, so each asset ships in both inks and the hero picks
-  the right one.
+- **The hero has no green panel.** The wordmark leads in brand green on cream
+  paper, so only the green-ink artwork ships. (If a green background is ever
+  reintroduced, the logo and mascot need cream-ink copies — green on green
+  disappears.)
 - **Light is the default**, regardless of the device's system setting. Dark
-  mode is opt-in via the toggle at the bottom-right and is remembered. It uses
+  mode is opt-in and remembered; the toggle sits beside the social icons on
+  home and in the topbar elsewhere, inline rather than floating, so it costs
+  the layout no space. It uses
   a warm charcoal rather than a second green, so the green panels and the orange
   accents still register. Body text is 7.4:1 in light and 12:1 in dark, both
   WCAG AAA.
@@ -149,6 +134,13 @@ type.
 - **Images** always carry their intrinsic `width`/`height` alongside a global
   `height: auto`, so the browser reserves the correct box and artwork is never
   stretched or shifted.
+- **Home fits one phone screen without scrolling.** It is a `100dvh` flex
+  column with the footer cluster pushed down by `margin-top: auto`, the larger
+  rhythm steps scale with viewport height, and three `max-height` tiers trim
+  type on shorter screens. Verified exact from 540px of visible height upward.
+  Nothing is ever truncated: below 620px tall the decorative mascot is hidden
+  and below 580px the `@handle` line goes, since the icons beside it lead to
+  the same accounts.
 
 ### A note on the brand fonts
 

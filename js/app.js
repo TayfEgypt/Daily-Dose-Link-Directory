@@ -12,10 +12,6 @@
  *  straight from the source artwork, and every image carries its
  *  intrinsic width/height so the browser reserves the right box and can
  *  never distort the page.
- *
- *  HERO VARIANTS — temporary, for picking a direction. Append ?hero=band,
- *  ?hero=cream or ?hero=cover to compare. Once one is chosen, keep that
- *  function, delete the other two and drop the switch.
  * ------------------------------------------------------------------ */
 (function () {
   'use strict';
@@ -31,12 +27,6 @@
   const menuOf = (branch) => MENU_PAGES[branch.menu];
   /** What to call the downloadable original, taken from its extension. */
   const originalKind = (menu) => (/\.pdf$/i.test(menu.pdf) ? 'PDF' : 'image');
-
-  const HEROES = ['band', 'cream', 'cover'];
-  function heroChoice() {
-    const q = new URLSearchParams(location.search).get('hero');
-    return HEROES.indexOf(q) !== -1 ? q : 'band';
-  }
 
   const SOCIAL = {
     instagram:
@@ -59,22 +49,17 @@
   /* ---------------------------------------------------------------- *
    *  Hero pieces
    * ---------------------------------------------------------------- */
-  /** Wordmark + kicker. `ink` picks the cream or green artwork. */
-  function logoBlock(ink, cls) {
-    const file = ink === 'cream' ? 'logo.webp' : 'logo-green.webp';
-    return (
-      '<div class="brand ' + (cls || '') + '">' +
-        '<img class="brand__mark" src="assets/img/' + file + '" width="2760" height="565" ' +
-          'alt="Daily Dose" fetchpriority="high" decoding="async">' +
-        '<span class="brand__kicker">' + esc(SITE.kicker) + '</span>' +
-      '</div>'
-    );
-  }
+  /** Wordmark + kicker, in the brand green on cream paper. */
+  const logoBlock = () =>
+    '<div class="brand">' +
+      '<img class="brand__mark" src="assets/img/logo.webp" width="2760" height="565" ' +
+        'alt="Daily Dose" fetchpriority="high" decoding="async">' +
+      '<span class="brand__kicker">' + esc(SITE.kicker) + '</span>' +
+    '</div>';
 
-  const mascotImg = (ink, cls) =>
-    '<img class="mascot ' + (cls || '') + '" width="702" height="640" alt="" aria-hidden="true" ' +
-    'fetchpriority="high" decoding="async" src="assets/img/' +
-    (ink === 'cream' ? 'mascot.webp' : 'mascot-green.webp') + '">';
+  const mascotImg = () =>
+    '<img class="mascot" src="assets/img/mascot.webp" width="702" height="640" alt="" ' +
+    'aria-hidden="true" fetchpriority="high" decoding="async">';
 
   /* The page's only h1, so the home page has a real heading. */
   const introBlock = () =>
@@ -83,46 +68,13 @@
       '<p class="intro__text rise" style="--i:4">' + esc(SITE.about) + '</p>' +
     '</section>';
 
-  /* --- variant A: slim green band, logo and mascot side by side ---- */
-  function heroBand() {
-    return (
-      '<header class="hero hero--band">' +
-        '<div class="hero__in">' +
-          logoBlock('cream', 'brand--xl') +
-          mascotImg('cream', 'mascot--band') +
-        '</div>' +
-      '</header>' +
-      '<div class="wrap">' + introBlock() + '</div>'
-    );
-  }
+  /* --- the hero: no green panel, the wordmark leading on cream ----- */
+  const heroHtml = () =>
+    '<header class="hero">' +
+      '<div class="hero__in">' + logoBlock() + mascotImg() + '</div>' +
+    '</header>' +
+    '<div class="wrap">' + introBlock() + '</div>';
 
-  /* --- variant B: no green panel, green logo on cream -------------- */
-  function heroCream() {
-    return (
-      '<header class="hero hero--cream">' +
-        '<div class="hero__in">' +
-          logoBlock('green', 'brand--xxl brand--center') +
-          mascotImg('green', 'mascot--cream') +
-        '</div>' +
-      '</header>' +
-      '<div class="wrap">' + introBlock() + '</div>'
-    );
-  }
-
-  /* --- variant C: generous green cover, logo centred on it --------- */
-  function heroCover() {
-    return (
-      '<header class="hero hero--cover">' +
-        '<div class="hero__in">' +
-          logoBlock('cream', 'brand--xxl brand--center') +
-          mascotImg('cream', 'mascot--cover') +
-        '</div>' +
-      '</header>' +
-      '<div class="wrap">' + introBlock() + '</div>'
-    );
-  }
-
-  const HERO_FN = { band: heroBand, cream: heroCream, cover: heroCover };
 
   /* ---------------------------------------------------------------- *
    *  Shared chrome
@@ -184,7 +136,7 @@
        overflowing. */
     return (
       '<div class="home">' +
-        HERO_FN[heroChoice()]() +
+        heroHtml() +
         '<div class="wrap home__links">' +
           '<nav class="links stack" aria-label="Main links">' + links + '</nav>' +
         '</div>' +
@@ -545,7 +497,6 @@
   /* ---------------------------------------------------------------- *
    *  Boot
    * ---------------------------------------------------------------- */
-  document.documentElement.dataset.hero = heroChoice();
   window.addEventListener('hashchange', render);
   window.addEventListener('scroll', onScroll, { passive: true });
   render();

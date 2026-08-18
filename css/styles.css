@@ -188,9 +188,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ------------------------------------------------------------------ *
-   5. Hero
-      Three variants share these pieces; the .hero--* blocks below
-      arrange them. Pick one and delete the other two.
+   5. Hero — no green panel; the wordmark leads on cream paper
  * ------------------------------------------------------------------ */
 .hero { position: relative; isolation: isolate; }
 .hero__in {
@@ -201,13 +199,11 @@ a { color: inherit; text-decoration: none; }
 
 /* --- wordmark ---------------------------------------------------- */
 .brand { animation: rise .8s var(--ease-out) both .1s; }
-.brand__mark { width: min(12rem, 100%); }
-.brand--xl .brand__mark { width: min(17.5rem, 88%); }
-.brand--xxl .brand__mark { width: min(20rem, 82%); }
-.brand--center {
+.brand {
   display: flex; flex-direction: column; align-items: center;
   text-align: center;
 }
+.brand__mark { width: min(20rem, 82%); }
 .brand__kicker {
   display: block; margin-top: .5rem;
   font-size: .66rem; font-weight: 600;
@@ -222,60 +218,13 @@ a { color: inherit; text-decoration: none; }
   animation: bob 7s ease-in-out infinite;
 }
 
-/* --- variant A: slim green band, logo dominant ------------------- */
-.hero--band {
-  background: var(--ink-deep);
-  color: var(--paper);
-  border-radius: 0 0 var(--r) var(--r);
-  overflow: hidden;
-  margin-bottom: var(--sp-block);
-}
-.hero--band::before {
-  content: '';
-  position: absolute; inset: 0; z-index: -1;
-  background: radial-gradient(ellipse 66% 90% at 106% 50%,
-    color-mix(in srgb, var(--matcha) 26%, transparent), transparent 70%);
-}
-.hero--band .hero__in {
-  display: flex; align-items: center; gap: 1rem;
-  padding-top: calc(clamp(1.1rem, 2.6vh, 1.9rem) + env(safe-area-inset-top));
-  padding-bottom: clamp(1rem, 2.4vh, 1.7rem);
-}
-.hero--band .brand { flex: 1 1 auto; min-width: 0; }
-.hero--band .mascot--band { flex: none; width: clamp(3.8rem, 18vw, 5.2rem); }
-
-/* --- variant B: no green panel ----------------------------------- */
-.hero--cream .hero__in {
+.hero__in {
   padding-top: calc(3rem + env(safe-area-inset-top));
   padding-bottom: 0;
   text-align: center;
 }
-.hero--cream { margin-bottom: var(--sp-block); }
-.hero--cream .mascot--cream { margin: 1.6rem auto 0; }
-
-/* --- variant C: generous green cover ---------------------------- */
-.hero--cover {
-  background: var(--ink-deep);
-  color: var(--paper);
-  border-radius: 0 0 var(--r) var(--r);
-  overflow: hidden;
-  margin-bottom: var(--sp-block);
-}
-.hero--cover::before {
-  content: '';
-  position: absolute; inset: 0; z-index: -1;
-  background:
-    radial-gradient(ellipse 70% 50% at 108% -8%,
-      color-mix(in srgb, var(--matcha) 26%, transparent), transparent 70%),
-    radial-gradient(ellipse 60% 45% at -12% 104%,
-      color-mix(in srgb, var(--orange) 20%, transparent), transparent 70%);
-}
-.hero--cover .hero__in {
-  padding-top: calc(3.4rem + env(safe-area-inset-top));
-  padding-bottom: 2.4rem;
-  text-align: center;
-}
-.hero--cover .mascot--cover { margin: 1.9rem auto 0; }
+.hero { margin-bottom: var(--sp-block); }
+.mascot { margin: 1.6rem auto 0; }
 
 /* ------------------------------------------------------------------ *
    6. Shell
@@ -675,38 +624,28 @@ a { color: inherit; text-decoration: none; }
    The fluid gaps have already bottomed out by here, so the remaining
    savings come from type, which keeps every word rather than truncating
    the copy to make it fit. */
-@media (max-height: 720px) {
-  .intro__title { font-size: clamp(1.28rem, 5.8vw, 1.6rem); }
-  .intro__text { font-size: .89rem; line-height: 1.5; }
-  .link { padding: .92rem 1.05rem; }
+@media (max-height: 760px) {
+  .intro__title { font-size: clamp(1.24rem, 5.5vw, 1.52rem); }
+  .intro__text { font-size: .87rem; line-height: 1.44; }
+  .link { padding: .82rem 1.05rem; }
   .link__label { font-size: 1rem; }
   .link__sub { font-size: .78rem; }
-  .brand--xl .brand__mark { width: min(15.5rem, 84%); }
-  /* the two centred variants stack logo above mascot, so they need the
-     most help fitting — pull in their padding and shrink the mark */
-  .brand--xxl .brand__mark { width: min(15rem, 74%); }
-  .hero--cream .hero__in { padding-top: calc(1.5rem + env(safe-area-inset-top)); }
-  .hero--cover .hero__in {
-    padding-top: calc(1.6rem + env(safe-area-inset-top));
-    padding-bottom: 1.3rem;
-  }
-  .hero--cream .mascot--cream, .hero--cover .mascot--cover { margin-top: .9rem; }
+  .brand__mark { width: min(14.5rem, 70%); }
+  .hero__in { padding-top: calc(1.15rem + env(safe-area-inset-top)); }
+  .mascot { width: clamp(3rem, 12.5vw, 3.8rem); margin-top: .55rem; }
+  .brand__kicker { margin-top: .28rem; font-size: .62rem; letter-spacing: .28em; }
 }
 @media (max-height: 620px) {
-  .intro__title { font-size: 1.18rem; }
-  .intro__text { font-size: .84rem; line-height: 1.45; }
-  .link { padding: .8rem 1rem; }
+  .intro__title { font-size: 1.16rem; }
+  .intro__text { font-size: .83rem; line-height: 1.42; }
+  .link { padding: .76rem 1rem; }
   .social { width: 2.8rem; height: 2.8rem; }
-  .brand--xl .brand__mark { width: min(13.5rem, 78%); }
-  .brand--xxl .brand__mark { width: min(13rem, 68%); }
-  .mascot { width: clamp(3.4rem, 15vw, 4.4rem); }
-  .hero--cream .hero__in { padding-top: calc(1.1rem + env(safe-area-inset-top)); }
-  .hero--cover .hero__in {
-    padding-top: calc(1.2rem + env(safe-area-inset-top));
-    padding-bottom: 1rem;
-  }
-  .hero--cream .mascot--cream, .hero--cover .mascot--cover { margin-top: .6rem; }
-  .brand__kicker { margin-top: .3rem; letter-spacing: .28em; }
+  .brand__mark { width: min(13rem, 66%); }
+  .hero__in { padding-top: calc(1rem + env(safe-area-inset-top)); }
+  /* The mascot is decorative and already aria-hidden. On the most cramped
+     screens it is the one thing worth giving up to keep the page on a
+     single screen with all the words intact. */
+  .mascot { display: none; }
 }
 /* The shortest phones in a browser with full chrome. The @handle line goes
    — the two icons beside it already lead to the same accounts — and the
@@ -726,14 +665,9 @@ a { color: inherit; text-decoration: none; }
 
 @media (min-width: 34rem) {
   :root { --pad: 1.6rem; }
-  .hero--band, .hero--cover { border-radius: 0 0 1.9rem 1.9rem; }
   .lb__scroll.is-zoomed .lb__img { width: calc(var(--z, 1) * (100vw - 3rem)); }
 }
 @media (min-width: 60rem) {
-  .hero--band, .hero--cover {
-    margin-top: 1.6rem; border-radius: 1.9rem;
-    max-width: var(--col); margin-inline: auto;
-  }
   .lb__scroll.is-zoomed .lb__img { width: calc(var(--z, 1) * min(100vw - 3rem, 60rem)); }
 }
 
