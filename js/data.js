@@ -33,29 +33,30 @@
   };
 
   /* ---------------------------------------------------------------- *
-   *  Branches
+   *  Branches — one flat list, shown in this order.
    *
-   *  menu    which set of artwork this branch serves (key in MENU_PAGES)
-   *  region  groups the cards on screen, nothing more. Kept broad on
-   *          purpose so no branch is filed under a district it isn't in.
+   *  menu  which set of artwork the branch serves (key in MENU_PAGES)
+   *  maps  Google Maps link. Omit it and the card shows "Location soon"
+   *        instead of a directions button.
    * ---------------------------------------------------------------- */
   const BRANCHES = [
-    { id: 'gouna',    name: 'Abu Tig Marina', region: 'El Gouna', menu: 'gouna',
+    { id: 'gouna',    name: 'Abu Tig Marina',  place: 'El Gouna',      menu: 'gouna',
       maps: 'https://maps.app.goo.gl/qZ8e1FSmnMoZ8xxM9' },
-    { id: 'mivida',   name: 'Mivida',         region: 'Cairo',    menu: 'cairo',
+    { id: 'mivida',   name: 'Mivida',          place: 'New Cairo',     menu: 'cairo',
       maps: 'https://maps.app.goo.gl/QeWSwuphXJHVDeLS9' },
-    { id: 'majarrah', name: 'Majarrah',       region: 'Cairo',    menu: 'cairo',
-      maps: 'https://maps.app.goo.gl/Kz8LY2wveZD8bwmq6' },
-    { id: 'driive',   name: 'The Driive',     region: 'Cairo',    menu: 'kiosk',
+    { id: 'driive',   name: 'The Driive',      place: '',              menu: 'kiosk',
       maps: 'https://maps.app.goo.gl/uTDzv42kKGwhGaCH8' },
-    { id: 'owest',    name: 'O West',         region: 'Cairo',    menu: 'kiosk',
+    { id: 'owest',    name: 'O West',          place: '',              menu: 'kiosk',
       maps: 'https://maps.app.goo.gl/LSo5REE3WjPdb9Bv6' },
+    { id: 'lavista',  name: 'La Vista',        place: 'Sahel',         menu: 'lavista',
+      maps: 'https://maps.app.goo.gl/9W58a8pvPcG6a87GA' },
+    { id: 'playa',    name: 'Playa',           place: 'Sahel',         menu: 'playa',
+      maps: 'https://maps.app.goo.gl/zfbdD4a1FnQAdwSm7' },
+    /* Mountain View: maps link still to come. */
+    { id: 'mountain', name: 'Mountain View',   place: 'Sahel',         menu: 'mountain' },
   ];
-
-  const REGION_ORDER = ['El Gouna', 'Cairo'];
 
   global.SITE = SITE;
   global.LINKS = LINKS;
   global.BRANCHES = BRANCHES;
-  global.REGION_ORDER = REGION_ORDER;
 })(window);

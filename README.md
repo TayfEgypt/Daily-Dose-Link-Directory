@@ -46,9 +46,11 @@ Hash-based, so every view is deep-linkable and safe on a QR code:
 | Route | View |
 |---|---|
 | `#/` | Home — the link tree |
-| `#/menus` | Branch picker |
-| `#/menu/<branch>` | That branch's menu. Ids: `gouna`, `mivida`, `majarrah`, `driive`, `owest` |
-| `#/locations` | All branches, with Google Maps directions |
+| `#/branches` | Every branch: directions + menu on one card |
+| `#/menu/<branch>` | That branch's menu. Ids: `gouna`, `mivida`, `driive`, `owest`, `lavista`, `playa`, `mountain` |
+
+`#/locations` and `#/menus` from the earlier two-tab layout both redirect to
+`#/branches`, so any link already shared keeps working.
 
 ---
 
@@ -57,16 +59,23 @@ Hash-based, so every view is deep-linkable and safe on a QR code:
 **The menus are the original artwork.** Nothing is retyped or re-laid-out.
 `tools/build-menus.py` renders each source page to an image at its native
 aspect ratio, and the untouched original stays downloadable via the button in
-the menu screen's header. Tapping a page opens a full-screen viewer with zoom
-up to 4×.
+the menu screen's header. Tapping a page opens a full-screen viewer that zooms
+as deep as the source artwork allows.
 
-Three sets of artwork cover the five branches:
+Six sets of artwork cover the seven branches:
 
 | Artwork | Branches |
 |---|---|
 | `DD Gouna Booklet (Gouna branch).pdf` | Abu Tig Marina |
-| `DD Cairo Booklet (Mivida and Majarrah branches).pdf` | Mivida, Majarrah |
+| `DD Cairo Booklet (Mivida and Majarrah branches).pdf` | Mivida |
 | `DD Menu (The Drive and O West branches).jpeg` | The Driive, O West |
+| `Sahel - La Vista menu (48cmx29.7cm).pdf` | La Vista |
+| `Sahel - Playa menu (45cmx29.7cm).pdf` | Playa |
+| `Sahel - Mountain view menu (45cmx29.7cm).pdf` | Mountain View |
+
+The Sahel menus are large-format landscape spreads rather than booklets, so
+the viewer lets zoom go deeper on them — far enough to reach the source
+resolution, since a 48 cm spread needs it to be readable on a phone.
 
 ### Updating a menu
 
@@ -89,32 +98,46 @@ sizes are picked up automatically — no other file needs editing.
 
 Everything routine is in **`js/data.js`**:
 
-- `BRANCHES` — name, region, Google Maps link, and which artwork the branch
-  serves. Add or remove one here and every screen follows.
+- `BRANCHES` — name, place, Google Maps link, and which artwork the branch
+  serves, as one flat ordered list. Add or remove one here and every screen
+  follows. Leave `maps` off a branch and its card shows "Location soon"
+  instead of a directions button.
 - `LINKS` — Instagram, TikTok, the review form.
 - `SITE` — the cover poem, the about paragraph, the sign-off.
 
-`region` only groups cards on screen. It is deliberately broad (`El Gouna` /
-`Cairo`) so no branch is filed under a district it isn't in; `REGION_ORDER`
-sets the order they appear.
-
 ---
+
+## Hero variants — pick one, then prune
+
+`js/app.js` currently ships three hero treatments so they can be compared in
+place. Append the query to the URL:
+
+| URL | Treatment |
+|---|---|
+| `?hero=band` (default) | Slim green band holding just the logo; tagline and poem below on cream |
+| `?hero=cream` | No green panel at all; large green logo centred on cream |
+| `?hero=cover` | Full green cover, logo leading it with a smaller tagline |
+
+Once one is chosen, keep its function in `app.js`, delete the other two along
+with their `.hero--*` blocks in the CSS, and drop the `heroChoice()` switch.
+The unused `logo-green.webp` / `mascot-green.webp` (or the cream pair) can go
+too, depending on which survives.
 
 ## Design notes
 
 The printed booklet is the design system, so the site reads as the same object:
 cream paper, green ink, the brand's own LeMonde Livre italic for display type,
-and the booklet's hand-drawn markers redrawn as SVG. The home screen's hero is
-the booklet cover rebuilt in HTML.
+and the booklet's hand-drawn markers redrawn as SVG.
 
 - **Colours** are sampled from the source artwork: paper `#F2F0E2`, ink
   `#1B582C`, cover green `#1C4425`, orange `#F68F43`.
-- **The cover panel is always the booklet green**, in both themes — which is
-  why the logo and mascot on it are the cream-ink versions. There is only one
-  copy of each; a green logo would disappear against that background.
+- **Green panels are always the booklet green**, in both themes — which is why
+  the logo and mascot placed on them use the cream-ink artwork. A green logo on
+  a green panel disappears, so each asset ships in both inks and the hero picks
+  the right one.
 - **Light is the default**, regardless of the device's system setting. Dark
   mode is opt-in via the toggle at the bottom-right and is remembered. It uses
-  a warm charcoal rather than a second green, so the green cover and the orange
+  a warm charcoal rather than a second green, so the green panels and the orange
   accents still register. Body text is 7.4:1 in light and 12:1 in dark, both
   WCAG AAA.
 - **Type**: LeMonde Livre for display and italic notes, Figtree for UI. Four

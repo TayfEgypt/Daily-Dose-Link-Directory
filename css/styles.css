@@ -159,24 +159,114 @@ a { color: inherit; text-decoration: none; }
   animation-delay: calc(var(--i, 0) * 62ms);
 }
 @media (prefers-reduced-motion: reduce) {
-  .rise, .cover__row, .cover__poem, .cover__foot { animation: fade .01s both; }
+  .rise, .brand, .tagline__row, .poem { animation: fade .01s both; }
   .mascot { animation: none; }
 }
 
 /* ------------------------------------------------------------------ *
-   5. Cover — the booklet front, rebuilt
-      Always the brand green, in both themes, so the artwork sitting on
-      it is always the cream-ink version.
+   5. Hero
+      Three variants share these pieces; the .hero--* blocks below
+      arrange them. Pick one and delete the other two.
  * ------------------------------------------------------------------ */
-.cover {
-  position: relative;
+.hero { position: relative; isolation: isolate; }
+.hero__in {
+  width: 100%; max-width: var(--col);
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+
+/* --- wordmark ---------------------------------------------------- */
+.brand { animation: rise .8s var(--ease-out) both .1s; }
+.brand__mark { width: min(12rem, 100%); }
+.brand--xl .brand__mark { width: min(17.5rem, 88%); }
+.brand__kicker {
+  display: block; margin-top: .5rem;
+  font-size: .66rem; font-weight: 600;
+  letter-spacing: .34em; text-transform: uppercase;
+  opacity: .66;
+}
+
+/* --- booklet tagline --------------------------------------------- */
+.tagline {
+  display: flex; flex-direction: column; gap: .1em;
+  font-family: 'LeMonde', serif; font-weight: 400;
+  /* sized so the longest row keeps a margin inside the gutters at 320px */
+  font-size: clamp(1.85rem, 11.1vw, 3.3rem);
+  line-height: .98; letter-spacing: .012em;
+  text-transform: uppercase;
+}
+.tagline--sm { font-size: clamp(1.35rem, 7.6vw, 2.2rem); }
+.tagline--ink { color: var(--fg); }
+.tagline__row {
+  display: flex; align-items: center; gap: .26em; min-width: 0;
+  animation: rise .8s var(--ease-out) both;
+  animation-delay: calc(.2s + var(--i) * 110ms);
+}
+.tagline__row--3 { justify-content: flex-end; }
+.tagline--center .tagline__row { justify-content: center; }
+.tagline__mark { flex: none; width: .9em; height: .9em; }
+.tagline__mark svg { width: 100%; height: 100%; }
+
+/* --- poem -------------------------------------------------------- */
+.poem {
+  margin-top: 1.6rem;
+  font-family: 'LeMonde', serif; font-style: italic;
+  font-size: clamp(.9rem, 3.8vw, 1rem); line-height: 1.5;
+  color: color-mix(in srgb, var(--paper) 84%, var(--ink-deep));
+  animation: rise .8s var(--ease-out) both .55s;
+}
+.poem span { display: block; }
+.poem--ink { color: var(--fg-soft); }
+.poem--center { text-align: center; }
+
+/* --- mascot ------------------------------------------------------ */
+.mascot {
+  width: clamp(4.6rem, 22vw, 6.4rem);
+  transform-origin: 60% 90%;
+  animation: bob 7s ease-in-out infinite;
+}
+
+/* --- variant A: slim green band, logo dominant ------------------- */
+.hero--band {
   background: var(--ink-deep);
   color: var(--paper);
   border-radius: 0 0 var(--r) var(--r);
   overflow: hidden;
-  isolation: isolate;
+  margin-bottom: 1.9rem;
 }
-.cover::before {
+.hero--band::before {
+  content: '';
+  position: absolute; inset: 0; z-index: -1;
+  background: radial-gradient(ellipse 66% 90% at 106% 50%,
+    color-mix(in srgb, var(--matcha) 26%, transparent), transparent 70%);
+}
+.hero--band .hero__in {
+  display: flex; align-items: center; gap: 1rem;
+  padding-top: calc(1.9rem + env(safe-area-inset-top));
+  padding-bottom: 1.7rem;
+}
+.hero--band .brand { flex: 1 1 auto; min-width: 0; }
+.hero--band .mascot--band { flex: none; width: clamp(3.8rem, 18vw, 5.2rem); }
+.hero--band + .wrap .tagline { margin-top: .4rem; }
+.hero--band + .wrap .poem { margin-top: 1.4rem; }
+
+/* --- variant B: no green panel ----------------------------------- */
+.hero--cream .hero__in {
+  padding-top: calc(2.6rem + env(safe-area-inset-top));
+  text-align: center;
+}
+.hero--cream .brand { display: flex; flex-direction: column; align-items: center; }
+.hero--cream .tagline { margin-top: 1.9rem; }
+.hero--cream .mascot--cream { margin: 1.5rem auto 0; }
+
+/* --- variant C: full green cover, logo leads it ------------------ */
+.hero--cover {
+  background: var(--ink-deep);
+  color: var(--paper);
+  border-radius: 0 0 var(--r) var(--r);
+  overflow: hidden;
+}
+.hero--cover::before {
   content: '';
   position: absolute; inset: 0; z-index: -1;
   background:
@@ -185,57 +275,12 @@ a { color: inherit; text-decoration: none; }
     radial-gradient(ellipse 60% 45% at -12% 104%,
       color-mix(in srgb, var(--orange) 20%, transparent), transparent 70%);
 }
-.cover__in {
-  width: 100%; max-width: var(--col);
-  margin-inline: auto;
-  padding: calc(2.3rem + env(safe-area-inset-top)) var(--pad) 1.8rem;
+.hero--cover .hero__in {
+  padding-top: calc(2.3rem + env(safe-area-inset-top));
+  padding-bottom: 1.8rem;
 }
-
-.cover__type {
-  display: flex; flex-direction: column; gap: .1em;
-  font-family: 'LeMonde', serif; font-weight: 400;
-  /* sized so the longest row keeps a margin inside the gutters at 320px */
-  font-size: clamp(1.85rem, 11.1vw, 3.3rem);
-  line-height: .98; letter-spacing: .012em;
-  text-transform: uppercase;
-}
-.cover__row {
-  display: flex; align-items: center; gap: .26em; min-width: 0;
-  animation: rise .8s var(--ease-out) both;
-  animation-delay: calc(var(--i) * 110ms);
-}
-.cover__row--3 { justify-content: flex-end; }
-.cover__mark { flex: none; width: .9em; height: .9em; }
-.cover__mark svg { width: 100%; height: 100%; }
-
-.cover__poem {
-  margin-top: 1.8rem;
-  font-family: 'LeMonde', serif; font-style: italic;
-  font-size: clamp(.9rem, 3.8vw, 1rem); line-height: 1.5;
-  color: color-mix(in srgb, var(--paper) 84%, var(--ink-deep));
-  animation: rise .8s var(--ease-out) both .5s;
-}
-.cover__poem span { display: block; }
-
-.cover__foot {
-  margin-top: 1.9rem;
-  display: flex; align-items: flex-end; gap: 1rem;
-  animation: rise .8s var(--ease-out) both .62s;
-}
-.cover__brand { flex: 1 1 auto; min-width: 0; }
-.logo { width: min(12rem, 100%); }
-.cover__kicker {
-  display: block; margin-top: .38rem;
-  font-size: .625rem; font-weight: 600;
-  letter-spacing: .32em; text-transform: uppercase;
-  color: color-mix(in srgb, var(--paper) 64%, var(--ink-deep));
-}
-.mascot {
-  flex: none;
-  width: clamp(4.6rem, 22vw, 6.4rem);
-  transform-origin: 60% 90%;
-  animation: bob 7s ease-in-out infinite;
-}
+.hero--cover .tagline { margin-top: 1.8rem; }
+.hero--cover .mascot--cover { margin-left: auto; margin-top: .6rem; }
 
 /* ------------------------------------------------------------------ *
    6. Shell
@@ -395,45 +440,34 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ------------------------------------------------------------------ *
-   10. Branch cards
+   10. Branch cards — one flat list, directions + menu on each
  * ------------------------------------------------------------------ */
-.region { display: flex; align-items: center; gap: .8rem; margin: 2.1rem 0 .9rem; }
-.region__name { font-family: 'LeMonde', serif; font-style: italic; font-size: 1.28rem; }
-.region__rule { flex: 1 1 auto; height: 1px; background: var(--rule); }
-.region__count { font-size: .72rem; color: var(--fg-faint); letter-spacing: .06em; }
+.branches { margin-top: 1.6rem; }
 
 .branch {
-  display: flex; align-items: center; gap: .9rem;
-  width: 100%; padding: 1.05rem;
+  padding: 1.05rem;
   border: 1.5px solid var(--rule); border-radius: var(--r);
   background: color-mix(in srgb, var(--surface) 55%, transparent);
-  text-align: left;
-  transition: border-color .28s var(--ease), transform .18s var(--ease),
-              background-color .28s var(--ease);
+  transition: border-color .28s var(--ease), background-color .28s var(--ease);
 }
 .branch + .branch { margin-top: .65rem; }
-.branch:hover, .branch:focus-visible {
-  border-color: var(--rule-firm);
-  background: var(--surface);
-  transform: translateY(-2px);
-}
-.branch:active { transform: scale(.99); }
+.branch:hover { border-color: var(--rule-firm); background: var(--surface); }
+
+.branch__head { display: flex; align-items: center; gap: .9rem; }
 .branch__ico { flex: none; width: 1.6rem; height: 1.6rem; }
 .branch__ico svg { width: 100%; height: 100%; }
+.branch__txt { flex: 1 1 auto; min-width: 0; }
 .branch__name {
-  flex: 1 1 auto; min-width: 0;
+  display: block;
   font-size: .84rem; font-weight: 700;
   text-transform: uppercase; letter-spacing: .085em;
 }
-.branch__go { flex: none; width: 1.05rem; height: 1.05rem; opacity: .45; }
-.branch__go svg { width: 100%; height: 100%; }
-.branch:hover .branch__go { opacity: .9; }
-
-/* locations: name, then two actions */
-.loc { display: block; }
-.loc:hover { transform: none; }
-.loc__head { display: flex; align-items: center; gap: .9rem; }
-.loc__acts { display: flex; gap: .5rem; margin-top: .9rem; }
+.branch__place {
+  display: block; margin-top: .16rem;
+  font-family: 'LeMonde', serif; font-style: italic;
+  font-size: .8rem; color: var(--fg-faint);
+}
+.branch__acts { display: flex; gap: .5rem; margin-top: .9rem; }
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
@@ -450,6 +484,11 @@ a { color: inherit; text-decoration: none; }
 .btn:active { transform: scale(.97); }
 .btn--solid { background: var(--fg); color: var(--bg); border-color: var(--fg); }
 .btn--solid:hover, .btn--solid:focus-visible { background: transparent; color: var(--fg); }
+/* a branch whose map link hasn't arrived yet */
+.btn--muted {
+  border-style: dashed; color: var(--fg-faint);
+  cursor: default; pointer-events: none;
+}
 
 /* ------------------------------------------------------------------ *
    11. Menu — the original artwork, page by page
@@ -463,6 +502,8 @@ a { color: inherit; text-decoration: none; }
 .menuhint svg { flex: none; width: 1.05rem; height: 1.05rem; }
 
 .pages { display: flex; flex-direction: column; gap: .9rem; margin-top: 1rem; }
+/* landscape spreads render short at column width — give them more air */
+.pages--wide { gap: 1.2rem; }
 
 .page {
   position: relative; display: block; width: 100%; padding: 0;
@@ -637,11 +678,14 @@ a { color: inherit; text-decoration: none; }
  * ------------------------------------------------------------------ */
 @media (min-width: 34rem) {
   :root { --pad: 1.6rem; }
-  .cover { border-radius: 0 0 1.9rem 1.9rem; }
+  .hero--band, .hero--cover { border-radius: 0 0 1.9rem 1.9rem; }
   .lb__scroll.is-zoomed .lb__img { width: calc(var(--z, 1) * (100vw - 3rem)); }
 }
 @media (min-width: 60rem) {
-  .cover { margin-top: 1.6rem; border-radius: 1.9rem; max-width: var(--col); margin-inline: auto; }
+  .hero--band, .hero--cover {
+    margin-top: 1.6rem; border-radius: 1.9rem;
+    max-width: var(--col); margin-inline: auto;
+  }
   .lb__scroll.is-zoomed .lb__img { width: calc(var(--z, 1) * min(100vw - 3rem, 60rem)); }
 }
 

@@ -3,9 +3,8 @@
  *
  *  Routes
  *    #/                  home (the link tree)
- *    #/menus             pick a branch
+ *    #/branches          every branch: directions + menu
  *    #/menu/<branchId>   that branch's menu, shown as the printed artwork
- *    #/locations         all branches + directions
  *
  *  Deep links are stable, so #/menu/gouna is safe to put on a QR code.
  *
@@ -13,6 +12,10 @@
  *  straight from the source artwork, and every image carries its
  *  intrinsic width/height so the browser reserves the right box and can
  *  never distort the page.
+ *
+ *  HERO VARIANTS — temporary, for picking a direction. Append ?hero=band,
+ *  ?hero=cream or ?hero=cover to compare. Once one is chosen, keep that
+ *  function, delete the other two and drop the switch.
  * ------------------------------------------------------------------ */
 (function () {
   'use strict';
@@ -28,6 +31,12 @@
   const menuOf = (branch) => MENU_PAGES[branch.menu];
   /** What to call the downloadable original, taken from its extension. */
   const originalKind = (menu) => (/\.pdf$/i.test(menu.pdf) ? 'PDF' : 'image');
+
+  const HEROES = ['band', 'cream', 'cover'];
+  function heroChoice() {
+    const q = new URLSearchParams(location.search).get('hero');
+    return HEROES.indexOf(q) !== -1 ? q : 'band';
+  }
 
   const SOCIAL = {
     instagram:
@@ -48,49 +57,105 @@
   };
 
   /* ---------------------------------------------------------------- *
-   *  Cover — the booklet front, rebuilt
-   *
-   *  The cover panel is the brand's deep green in both themes, so the
-   *  artwork on it is always the cream ink version.
+   *  Hero pieces
    * ---------------------------------------------------------------- */
-  function coverHtml() {
+  /** Wordmark + kicker. `ink` picks the cream or green artwork. */
+  function logoBlock(ink, cls) {
+    const file = ink === 'cream' ? 'logo.webp' : 'logo-green.webp';
+    return (
+      '<div class="brand ' + (cls || '') + '">' +
+        '<img class="brand__mark" src="assets/img/' + file + '" width="2760" height="565" ' +
+          'alt="Daily Dose" fetchpriority="high" decoding="async">' +
+        '<span class="brand__kicker">' + esc(SITE.kicker) + '</span>' +
+      '</div>'
+    );
+  }
+
+  /** The booklet tagline: THIS ◦ MUST BE ◦ THE PLACE, marks inline. */
+  function taglineBlock(cls) {
     const rows = [
       { words: ['THIS', 'MUST'], mark: 'cup' },
       { words: ['BE', 'THE'], mark: 'kettle' },
       { words: ['PLACE'], mark: 'pancakes', end: true },
     ];
-    const type = rows
-      .map((r, i) => {
-        const mark = '<span class="cover__mark">' + icon(r.mark, { sw: 1.4 }) + '</span>';
-        const body = r.end
-          ? mark + '<span>' + r.words[0] + '</span>'
-          : '<span>' + r.words[0] + '</span>' + mark + '<span>' + r.words[1] + '</span>';
-        return '<div class="cover__row cover__row--' + (i + 1) + '" style="--i:' + i + '">' +
-          body + '</div>';
-      })
-      .join('');
-
     return (
-      '<header class="cover">' +
-        '<div class="cover__in">' +
-          '<div class="cover__type">' + type + '</div>' +
-          '<p class="cover__poem">' +
-            SITE.poem.map((l) => '<span>' + esc(l) + '</span>').join('') +
-          '</p>' +
-          '<div class="cover__foot">' +
-            '<div class="cover__brand">' +
-              '<img class="logo" src="assets/img/logo.webp" width="2760" height="565" ' +
-                'alt="Daily Dose" fetchpriority="high" decoding="async">' +
-              '<span class="cover__kicker">' + esc(SITE.kicker) + '</span>' +
-            '</div>' +
-            '<img class="mascot" src="assets/img/mascot.webp" width="702" height="640" ' +
-              'alt="" aria-hidden="true" fetchpriority="high" decoding="async">' +
-          '</div>' +
-        '</div>' +
-      '</header>'
+      '<div class="tagline ' + (cls || '') + '">' +
+        rows.map((r, i) => {
+          const mark = '<span class="tagline__mark">' + icon(r.mark, { sw: 1.4 }) + '</span>';
+          return '<div class="tagline__row tagline__row--' + (i + 1) + '" style="--i:' + i + '">' +
+            (r.end
+              ? mark + '<span>' + r.words[0] + '</span>'
+              : '<span>' + r.words[0] + '</span>' + mark + '<span>' + r.words[1] + '</span>') +
+            '</div>';
+        }).join('') +
+      '</div>'
     );
   }
 
+  const poemBlock = (cls) =>
+    '<p class="poem ' + (cls || '') + '">' +
+      SITE.poem.map((l) => '<span>' + esc(l) + '</span>').join('') +
+    '</p>';
+
+  const mascotImg = (ink, cls) =>
+    '<img class="mascot ' + (cls || '') + '" width="702" height="640" alt="" aria-hidden="true" ' +
+    'fetchpriority="high" decoding="async" src="assets/img/' +
+    (ink === 'cream' ? 'mascot.webp' : 'mascot-green.webp') + '">';
+
+  const aboutBlock = () => '<p class="about rise" style="--i:4">' + esc(SITE.about) + '</p>';
+
+  /* --- variant A: slim green band, logo dominant ------------------- */
+  function heroBand() {
+    return (
+      '<header class="hero hero--band">' +
+        '<div class="hero__in">' +
+          logoBlock('cream', 'brand--xl') +
+          mascotImg('cream', 'mascot--band') +
+        '</div>' +
+      '</header>' +
+      '<div class="wrap">' +
+        taglineBlock('tagline--ink') +
+        poemBlock('poem--ink') +
+        aboutBlock() +
+      '</div>'
+    );
+  }
+
+  /* --- variant B: no green panel ----------------------------------- */
+  function heroCream() {
+    return (
+      '<header class="hero hero--cream">' +
+        '<div class="hero__in">' +
+          logoBlock('green', 'brand--xl') +
+          taglineBlock('tagline--ink tagline--center') +
+          poemBlock('poem--ink poem--center') +
+          mascotImg('green', 'mascot--cream') +
+        '</div>' +
+      '</header>' +
+      '<div class="wrap">' + aboutBlock() + '</div>'
+    );
+  }
+
+  /* --- variant C: full green cover, logo leads it ------------------ */
+  function heroCover() {
+    return (
+      '<header class="hero hero--cover">' +
+        '<div class="hero__in">' +
+          logoBlock('cream', 'brand--xl') +
+          taglineBlock('tagline--sm') +
+          poemBlock() +
+          mascotImg('cream', 'mascot--cover') +
+        '</div>' +
+      '</header>' +
+      '<div class="wrap">' + aboutBlock() + '</div>'
+    );
+  }
+
+  const HERO_FN = { band: heroBand, cream: heroCream, cover: heroCover };
+
+  /* ---------------------------------------------------------------- *
+   *  Shared chrome
+   * ---------------------------------------------------------------- */
   function topbarHtml(title, sub, extra) {
     return (
       '<div class="topbar" id="topbar">' +
@@ -111,10 +176,8 @@
    * ---------------------------------------------------------------- */
   function viewHome() {
     const rows = [
-      { href: '#/menus', ico: 'book', label: 'Menus', ink: 'orange',
-        sub: 'The full booklet for every branch' },
-      { href: '#/locations', ico: 'pin', label: 'Locations', ink: 'orange',
-        sub: BRANCHES.length + ' branches · tap for directions' },
+      { href: '#/branches', ico: 'pin', label: 'Branches', ink: 'orange',
+        sub: BRANCHES.length + ' locations · directions and menus' },
       { href: LINKS.review, ico: 'star', label: 'Leave a review', ink: 'gold',
         sub: 'Tell us how we did — it takes a minute', ext: true },
     ];
@@ -134,9 +197,8 @@
       .join('');
 
     return (
-      coverHtml() +
+      HERO_FN[heroChoice()]() +
       '<div class="wrap">' +
-        '<p class="about rise" style="--i:4">' + esc(SITE.about) + '</p>' +
         '<nav class="links stack" aria-label="Main links">' + links + '</nav>' +
         '<div class="socials rise" style="--i:8">' +
           '<a class="social" href="' + esc(LINKS.instagram) + '" target="_blank" ' +
@@ -154,79 +216,39 @@
   }
 
   /* ---------------------------------------------------------------- *
-   *  View: branch lists
+   *  View: branches — one flat list, directions + menu on each card
    * ---------------------------------------------------------------- */
-  function branchGroups() {
-    const seen = {};
-    BRANCHES.forEach((b) => { (seen[b.region] = seen[b.region] || []).push(b); });
-    return REGION_ORDER.filter((r) => seen[r]).map((r) => ({ region: r, list: seen[r] }));
-  }
-
-  function regionHead(region, n) {
-    return (
-      '<div class="region">' +
-        '<h2 class="region__name">' + esc(region) + '</h2>' +
-        '<span class="region__rule"></span>' +
-        '<span class="region__count nums">' + n + '</span>' +
-      '</div>'
-    );
-  }
-
-  /** Render each region's branches with a per-branch card builder. */
-  function branchList(card) {
-    let i = 0;
-    return branchGroups()
-      .map((g) => regionHead(g.region, g.list.length) +
-        g.list.map((b) => card(b, i++)).join(''))
+  function viewBranches() {
+    const cards = BRANCHES
+      .map((b, i) => (
+        '<div class="branch rise" style="--i:' + i + '">' +
+          '<div class="branch__head">' +
+            '<span class="branch__ico">' + icon('pin', { ink: 'orange' }) + '</span>' +
+            '<span class="branch__txt">' +
+              '<span class="branch__name">' + esc(b.name) + '</span>' +
+              (b.place ? '<span class="branch__place">' + esc(b.place) + '</span>' : '') +
+            '</span>' +
+          '</div>' +
+          '<div class="branch__acts">' +
+            (b.maps
+              ? '<a class="btn btn--solid" href="' + esc(b.maps) + '" target="_blank" ' +
+                  'rel="noopener noreferrer">' + icon('pin', { sw: 2 }) + 'Directions</a>'
+              : '<span class="btn btn--muted">' + icon('pin', { sw: 2 }) + 'Location soon</span>') +
+            '<a class="btn" href="#/menu/' + esc(b.id) + '">' +
+              icon('book', { sw: 2 }) + 'Menu</a>' +
+          '</div>' +
+        '</div>'
+      ))
       .join('');
-  }
-
-  function viewMenus() {
-    const body = branchList((b, i) => (
-      '<a class="branch rise" style="--i:' + i + '" href="#/menu/' + esc(b.id) + '">' +
-        '<span class="branch__ico">' + icon('book', { ink: 'orange' }) + '</span>' +
-        '<span class="branch__name">' + esc(b.name) + '</span>' +
-        '<span class="branch__go">' + icon('arrow', { sw: 2 }) + '</span>' +
-      '</a>'
-    ));
 
     return (
-      topbarHtml('Menus', 'Pick a branch') +
-      '<div class="wrap wrap--wide">' +
-        '<div class="pagehead rise">' +
-          '<h1 class="pagehead__title">which one is<br>yours?</h1>' +
-          '<p class="pagehead__lede">Menus differ a little between branches — pick yours and ' +
-            'you’ll get the right one.</p>' +
-        '</div>' +
-        body +
-      '</div>'
-    );
-  }
-
-  function viewLocations() {
-    const body = branchList((b, i) => (
-      '<div class="branch loc rise" style="--i:' + i + '">' +
-        '<div class="loc__head">' +
-          '<span class="branch__ico">' + icon('pin', { ink: 'orange' }) + '</span>' +
-          '<span class="branch__name">' + esc(b.name) + '</span>' +
-        '</div>' +
-        '<div class="loc__acts">' +
-          '<a class="btn btn--solid" href="' + esc(b.maps) + '" target="_blank" ' +
-            'rel="noopener noreferrer">' + icon('pin', { sw: 2 }) + 'Directions</a>' +
-          '<a class="btn" href="#/menu/' + esc(b.id) + '">' +
-            icon('book', { sw: 2 }) + 'Menu</a>' +
-        '</div>' +
-      '</div>'
-    ));
-
-    return (
-      topbarHtml('Locations', BRANCHES.length + ' branches') +
+      topbarHtml('Branches', BRANCHES.length + ' locations') +
       '<div class="wrap wrap--wide">' +
         '<div class="pagehead rise">' +
           '<h1 class="pagehead__title">find us</h1>' +
-          '<p class="pagehead__lede">From the marina where it started to four more across Cairo.</p>' +
+          '<p class="pagehead__lede">Every branch, with directions and its own menu.</p>' +
         '</div>' +
-        body +
+        '<div class="branches">' + cards + '</div>' +
       '</div>'
     );
   }
@@ -236,9 +258,11 @@
    * ---------------------------------------------------------------- */
   function viewMenu(branchId) {
     const branch = branchById(branchId);
-    if (!branch) return viewMenus();
+    if (!branch) return viewBranches();
     const menu = menuOf(branch);
     const total = menu.pages.length;
+    /* wide spreads get a wider thumbnail treatment */
+    const wide = menu.pages[0].w > menu.pages[0].h;
 
     const pages = menu.pages
       .map((p, i) => (
@@ -253,15 +277,16 @@
       .join('');
 
     return (
-      topbarHtml(branch.name, '',
+      topbarHtml(branch.name, branch.place,
         '<a class="iconbtn" href="' + esc(menu.pdf) + '" target="_blank" rel="noopener" ' +
           'aria-label="Open the original ' + originalKind(menu) + '">' +
           icon('download', { sw: 2 }) + '</a>') +
 
       '<div class="wrap wrap--wide">' +
         '<p class="menuhint rise">' + icon('zoom', { sw: 2 }) +
-          '<span>Tap any page to zoom.</span></p>' +
-        '<div class="pages">' + pages + '</div>' +
+          '<span>Tap any page to zoom' + (wide ? ' — this one is a wide spread' : '') +
+          '.</span></p>' +
+        '<div class="pages' + (wide ? ' pages--wide' : '') + '">' + pages + '</div>' +
       '</div>' +
 
       (total > 1
@@ -285,7 +310,6 @@
     const pill = document.getElementById('pagePill');
     let spy = null;
 
-    /* which page am I looking at */
     if (pill) {
       spy = new IntersectionObserver(
         (entries) => entries.forEach((en) => {
@@ -298,9 +322,9 @@
       host.querySelectorAll('.page').forEach((el) => spy.observe(el));
     }
 
-    /* --- full-screen viewer --- */
     let at = 0;
     let zoom = 1;
+    let maxZoom = 4;
 
     const lb = document.createElement('div');
     lb.className = 'lb';
@@ -343,11 +367,11 @@
         ? (scroll.scrollTop + scroll.clientHeight / 2) / scroll.scrollHeight
         : 0.5;
 
-      zoom = Math.min(4, Math.max(1, z));
+      zoom = Math.min(maxZoom, Math.max(1, z));
       scroll.style.setProperty('--z', zoom);
       scroll.classList.toggle('is-zoomed', zoom > 1);
       lb.querySelector('#lbOut').disabled = zoom <= 1;
-      lb.querySelector('#lbIn').disabled = zoom >= 4;
+      lb.querySelector('#lbIn').disabled = zoom >= maxZoom;
 
       /* Reading scrollWidth flushes the new layout, so no frame callback
          is needed. Zooming in from the fitted view starts at the top of
@@ -366,17 +390,22 @@
       img.height = p.h;
       img.alt = branch.name + ' menu, page ' + (at + 1) + ' of ' + total;
       count.textContent = (at + 1) + ' / ' + total;
+      /* Let zoom reach 1:1 with the source pixels — a 2835px wide spread
+         needs far more than a 827px booklet page to become readable. */
+      const fitW = Math.max(scroll.clientWidth - 24, 1);
+      maxZoom = Math.max(4, Math.min(10, Math.ceil(p.w / fitW)));
+      zoom = 0;                        /* force setZoom to apply */
       setZoom(1);
       scroll.scrollTo({ top: 0, left: 0 });
     }
 
     function open(i) {
       lastFocus = document.activeElement;
-      show(i);
       clearTimeout(closeTimer);
       lb.classList.remove('is-closing');
       lb.hidden = false;
       document.body.classList.add('is-locked');
+      show(i);                         /* after unhide, so clientWidth is real */
       lb.querySelector('#lbClose').focus();
     }
 
@@ -404,7 +433,7 @@
       lb.querySelector('#lbNext').addEventListener('click', () => show(at + 1));
     }
     /* tap the artwork to flip between whole-page and readable */
-    img.addEventListener('click', () => setZoom(zoom > 1 ? 1 : 2.5));
+    img.addEventListener('click', () => setZoom(zoom > 1 ? 1 : Math.min(maxZoom, 2.5)));
     scroll.addEventListener('click', (e) => { if (e.target === scroll) close(); });
     lb.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') { close(); return; }
@@ -413,7 +442,6 @@
       if (e.key === 'ArrowRight') show(at + 1);
     });
 
-    /* the viewer belongs to this route only */
     teardown = () => {
       if (spy) spy.disconnect();
       clearTimeout(closeTimer);
@@ -440,8 +468,10 @@
   function parse() {
     const p = (location.hash || '#/').replace(/^#/, '').split('/').filter(Boolean);
     if (!p.length) return { name: 'home' };
-    if (p[0] === 'menus') return { name: 'menus' };
-    if (p[0] === 'locations') return { name: 'locations' };
+    /* the old split routes both now land on Branches */
+    if (p[0] === 'branches' || p[0] === 'locations' || p[0] === 'menus') {
+      return { name: 'branches' };
+    }
     if (p[0] === 'menu' && p[1]) return { name: 'menu', id: p[1] };
     return { name: 'home' };
   }
@@ -451,13 +481,11 @@
 
     let html, title;
     switch (route.name) {
-      case 'menus':
-        html = viewMenus(); title = 'Menus · Daily Dose'; break;
-      case 'locations':
-        html = viewLocations(); title = 'Locations · Daily Dose'; break;
+      case 'branches':
+        html = viewBranches(); title = 'Branches · Daily Dose'; break;
       case 'menu': {
         const b = branchById(route.id);
-        if (!b) { location.hash = '#/menus'; return; }
+        if (!b) { location.hash = '#/branches'; return; }
         html = viewMenu(route.id);
         title = b.name + ' menu · Daily Dose';
         break;
@@ -482,8 +510,6 @@
 
     const run = () => { paint(route); window.scrollTo(0, 0); };
 
-    /* Cross-fade between routes only — never on the first paint, and
-       never while hidden (the API rejects in both cases). */
     const animate =
       !firstPaint &&
       typeof document.startViewTransition === 'function' &&
@@ -525,6 +551,7 @@
   /* ---------------------------------------------------------------- *
    *  Boot
    * ---------------------------------------------------------------- */
+  document.documentElement.dataset.hero = heroChoice();
   window.addEventListener('hashchange', render);
   window.addEventListener('scroll', onScroll, { passive: true });
   render();

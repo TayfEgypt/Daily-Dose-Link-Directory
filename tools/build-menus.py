@@ -43,10 +43,14 @@ DPI = 150        # 827x1746 px for a 5.5x11.6in page — crisp on retina
 QUALITY = 80
 
 SOURCES = [
-    # key,    source filename,                                        download name
-    ('gouna', 'DD Gouna Booklet (Gouna branch).pdf',                  'DD-Gouna-Menu.pdf'),
-    ('cairo', 'DD Cairo Booklet (Mivida and Majarrah branches).pdf',  'DD-Cairo-Menu.pdf'),
-    ('kiosk', 'DD Menu (The Drive and O West branches).jpeg',         'DD-Driive-OWest-Menu.jpeg'),
+    # key,      source filename,                                        download name
+    ('gouna',   'DD Gouna Booklet (Gouna branch).pdf',                  'DD-Gouna-Menu.pdf'),
+    ('cairo',   'DD Cairo Booklet (Mivida and Majarrah branches).pdf',  'DD-Cairo-Menu.pdf'),
+    ('kiosk',   'DD Menu (The Drive and O West branches).jpeg',         'DD-Driive-OWest-Menu.jpeg'),
+    # Sahel branches — large-format landscape spreads, 2 sides each
+    ('lavista', 'Sahel - La Vista menu (48cmx29.7cm).pdf',              'DD-LaVista-Menu.pdf'),
+    ('playa',   'Sahel - Playa menu (45cmx29.7cm).pdf',                 'DD-Playa-Menu.pdf'),
+    ('mountain', 'Sahel - Mountain view menu (45cmx29.7cm).pdf',        'DD-MountainView-Menu.pdf'),
 ]
 
 
