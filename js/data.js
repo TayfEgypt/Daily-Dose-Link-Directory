@@ -10,6 +10,8 @@
 
   const SITE = {
     kicker: 'Coffee Roasters',
+    /* the booklet's own heading for the paragraph below it */
+    title: 'A glimpse about us before you dig in!',
     about:
       'What started as a cozy corner in El Gouna back in 2022 has grown into ' +
       'more than just a coffee spot—it’s your daily escape. Where specialty ' +

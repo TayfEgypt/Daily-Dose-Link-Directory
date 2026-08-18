@@ -76,7 +76,12 @@
     'fetchpriority="high" decoding="async" src="assets/img/' +
     (ink === 'cream' ? 'mascot.webp' : 'mascot-green.webp') + '">';
 
-  const aboutBlock = () => '<p class="about rise" style="--i:4">' + esc(SITE.about) + '</p>';
+  /* The page's only h1, so the home page has a real heading. */
+  const introBlock = () =>
+    '<section class="intro">' +
+      '<h1 class="intro__title rise" style="--i:3">' + esc(SITE.title) + '</h1>' +
+      '<p class="intro__text rise" style="--i:4">' + esc(SITE.about) + '</p>' +
+    '</section>';
 
   /* --- variant A: slim green band, logo and mascot side by side ---- */
   function heroBand() {
@@ -87,7 +92,7 @@
           mascotImg('cream', 'mascot--band') +
         '</div>' +
       '</header>' +
-      '<div class="wrap">' + aboutBlock() + '</div>'
+      '<div class="wrap">' + introBlock() + '</div>'
     );
   }
 
@@ -100,7 +105,7 @@
           mascotImg('green', 'mascot--cream') +
         '</div>' +
       '</header>' +
-      '<div class="wrap">' + aboutBlock() + '</div>'
+      '<div class="wrap">' + introBlock() + '</div>'
     );
   }
 
@@ -113,7 +118,7 @@
           mascotImg('cream', 'mascot--cover') +
         '</div>' +
       '</header>' +
-      '<div class="wrap">' + aboutBlock() + '</div>'
+      '<div class="wrap">' + introBlock() + '</div>'
     );
   }
 
