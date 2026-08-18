@@ -60,13 +60,15 @@
   --r:    1.25rem;
   --r-sm: .75rem;
 
-  /* Vertical rhythm. Everything used to sit at a flat ~1.9rem, which read
-     as one undifferentiated ladder; these steps let blocks group. */
-  --sp-tight:   .55rem;   /* inside a block */
-  --sp-related: .9rem;    /* items that belong together */
-  --sp-block:  1.7rem;    /* between blocks */
-  --sp-section: 2.5rem;   /* between sections */
-  --sp-major:  3.4rem;    /* before the footer */
+  /* Vertical rhythm. Steps rather than one flat interval, so blocks group.
+     The larger ones scale with viewport HEIGHT: a short phone compresses
+     them instead of pushing the home page into a scroll, a tall one gets
+     the full breathing room. */
+  --sp-tight:   .5rem;                          /* inside a block */
+  --sp-related: clamp(.5rem, 1.1vh, .9rem);     /* items that belong together */
+  --sp-block:   clamp(1rem, 2.2vh, 1.7rem);     /* between blocks */
+  --sp-section: clamp(1.15rem, 3vh, 2.5rem);    /* between sections */
+  --sp-major:   clamp(1.35rem, 3.6vh, 3rem);    /* before the footer */
 
   --pad: 1.15rem;
   --ease: cubic-bezier(.22, .61, .36, 1);
@@ -141,8 +143,22 @@ a { color: inherit; text-decoration: none; }
 }
 :root[data-theme='dark'] .grain { mix-blend-mode: screen; opacity: .07; }
 
-.app { position: relative; z-index: 1; padding-bottom: calc(4rem + env(safe-area-inset-bottom)); }
+.app { position: relative; z-index: 1; }
 .app:focus { outline: none; }
+
+/* Home fills exactly one viewport: hero and links at the top, the social
+   and sign-off cluster pushed down by margin-top:auto. dvh rather than vh
+   so mobile browser chrome is accounted for. */
+.home {
+  min-height: 100dvh;
+  display: flex; flex-direction: column;
+  padding-bottom: calc(.9rem + env(safe-area-inset-bottom));
+}
+.home__links { margin-top: var(--sp-section); }
+.home__foot { margin-top: auto; padding-top: var(--sp-major); }
+
+/* Sub-pages keep their own bottom breathing room. */
+.subpage { padding-bottom: calc(2.5rem + env(safe-area-inset-bottom)); }
 
 .nums { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1; }
 .ico { flex: none; }
@@ -212,7 +228,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--paper);
   border-radius: 0 0 var(--r) var(--r);
   overflow: hidden;
-  margin-bottom: var(--sp-section);
+  margin-bottom: var(--sp-block);
 }
 .hero--band::before {
   content: '';
@@ -222,8 +238,8 @@ a { color: inherit; text-decoration: none; }
 }
 .hero--band .hero__in {
   display: flex; align-items: center; gap: 1rem;
-  padding-top: calc(1.9rem + env(safe-area-inset-top));
-  padding-bottom: 1.7rem;
+  padding-top: calc(clamp(1.1rem, 2.6vh, 1.9rem) + env(safe-area-inset-top));
+  padding-bottom: clamp(1rem, 2.4vh, 1.7rem);
 }
 .hero--band .brand { flex: 1 1 auto; min-width: 0; }
 .hero--band .mascot--band { flex: none; width: clamp(3.8rem, 18vw, 5.2rem); }
@@ -234,7 +250,7 @@ a { color: inherit; text-decoration: none; }
   padding-bottom: 0;
   text-align: center;
 }
-.hero--cream { margin-bottom: var(--sp-section); }
+.hero--cream { margin-bottom: var(--sp-block); }
 .hero--cream .mascot--cream { margin: 1.6rem auto 0; }
 
 /* --- variant C: generous green cover ---------------------------- */
@@ -243,7 +259,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--paper);
   border-radius: 0 0 var(--r) var(--r);
   overflow: hidden;
-  margin-bottom: var(--sp-section);
+  margin-bottom: var(--sp-block);
 }
 .hero--cover::before {
   content: '';
@@ -296,7 +312,7 @@ a { color: inherit; text-decoration: none; }
 /* ------------------------------------------------------------------ *
    7. Link rows (home)
  * ------------------------------------------------------------------ */
-.links { gap: .65rem; margin-top: var(--sp-section); }
+.links { gap: .6rem; }
 
 .link {
   position: relative;
@@ -345,7 +361,7 @@ a { color: inherit; text-decoration: none; }
 /* ------------------------------------------------------------------ *
    8. Socials + sign-off
  * ------------------------------------------------------------------ */
-.socials { display: flex; justify-content: center; gap: .8rem; margin-top: var(--sp-section); }
+.socials { display: flex; justify-content: center; gap: .7rem; }
 .social {
   display: grid; place-items: center;
   width: 3.1rem; height: 3.1rem;
@@ -359,13 +375,13 @@ a { color: inherit; text-decoration: none; }
   transform: translateY(-2px);
 }
 .handle {
-  margin-top: var(--sp-related); text-align: center;
-  font-size: .78rem; letter-spacing: .03em; color: var(--fg-faint);
+  margin-top: var(--sp-tight); text-align: center;
+  font-size: .76rem; letter-spacing: .03em; color: var(--fg-faint);
 }
 .signoff {
-  margin-top: var(--sp-major); text-align: center;
+  margin-top: var(--sp-block); text-align: center;
   font-family: 'LeMonde', serif; font-style: italic;
-  font-size: .9rem; line-height: 1.6; color: var(--fg-faint);
+  font-size: .88rem; line-height: 1.5; color: var(--fg-faint);
 }
 .signoff strong { display: block; margin-bottom: .2rem; font-weight: 600; font-style: normal; letter-spacing: .01em; }
 
@@ -621,39 +637,26 @@ a { color: inherit; text-decoration: none; }
 .lb__nav:active { transform: translateY(-50%) scale(.94); }
 
 /* ------------------------------------------------------------------ *
-   13. Theme toggle
+   13. Theme toggle — inline, so it reserves no page space
  * ------------------------------------------------------------------ */
-.theme-toggle {
-  position: fixed; z-index: 30;
-  right: max(.9rem, env(safe-area-inset-right));
-  bottom: calc(.9rem + env(safe-area-inset-bottom));
-  width: 2.75rem; height: 2.75rem;
-  display: grid; place-items: center;
-  border-radius: 50%;
-  border: 1.5px solid var(--rule-firm);
-  background: color-mix(in srgb, var(--bg) 86%, transparent);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: transform .22s var(--ease), border-color .25s var(--ease);
-}
-.theme-toggle:hover { transform: scale(1.06); border-color: var(--fg); }
-.theme-toggle:active { transform: scale(.95); }
-.theme-toggle__track { position: relative; width: 1.15rem; height: 1.15rem; }
-.theme-toggle__sun, .theme-toggle__moon {
+.themeToggle { display: grid; place-items: center; }
+.theme-ico { position: relative; width: 1.15rem; height: 1.15rem; }
+.social .theme-ico { width: 1.25rem; height: 1.25rem; }
+.theme-ico__sun, .theme-ico__moon {
   position: absolute; inset: 0;
   transition: opacity .3s var(--ease), transform .4s var(--ease-out);
 }
-.theme-toggle__sun {
+.theme-ico__sun {
   border-radius: 50%; border: 1.6px solid currentColor;
   background: radial-gradient(circle, currentColor 0 32%, transparent 33%);
 }
-.theme-toggle__moon {
+.theme-ico__moon {
   border-radius: 50%;
   box-shadow: inset -.34rem -.06rem 0 0 currentColor;
   opacity: 0; transform: rotate(-40deg) scale(.7);
 }
-:root[data-theme='dark'] .theme-toggle__sun { opacity: 0; transform: rotate(40deg) scale(.7); }
-:root[data-theme='dark'] .theme-toggle__moon { opacity: 1; transform: none; }
+:root[data-theme='dark'] .theme-ico__sun { opacity: 0; transform: rotate(40deg) scale(.7); }
+:root[data-theme='dark'] .theme-ico__moon { opacity: 1; transform: none; }
 
 /* ------------------------------------------------------------------ *
    14. Route transition
@@ -668,6 +671,59 @@ a { color: inherit; text-decoration: none; }
 /* ------------------------------------------------------------------ *
    15. Wider screens
  * ------------------------------------------------------------------ */
+/* Short viewports — most phones once the browser chrome is subtracted.
+   The fluid gaps have already bottomed out by here, so the remaining
+   savings come from type, which keeps every word rather than truncating
+   the copy to make it fit. */
+@media (max-height: 720px) {
+  .intro__title { font-size: clamp(1.28rem, 5.8vw, 1.6rem); }
+  .intro__text { font-size: .89rem; line-height: 1.5; }
+  .link { padding: .92rem 1.05rem; }
+  .link__label { font-size: 1rem; }
+  .link__sub { font-size: .78rem; }
+  .brand--xl .brand__mark { width: min(15.5rem, 84%); }
+  /* the two centred variants stack logo above mascot, so they need the
+     most help fitting — pull in their padding and shrink the mark */
+  .brand--xxl .brand__mark { width: min(15rem, 74%); }
+  .hero--cream .hero__in { padding-top: calc(1.5rem + env(safe-area-inset-top)); }
+  .hero--cover .hero__in {
+    padding-top: calc(1.6rem + env(safe-area-inset-top));
+    padding-bottom: 1.3rem;
+  }
+  .hero--cream .mascot--cream, .hero--cover .mascot--cover { margin-top: .9rem; }
+}
+@media (max-height: 620px) {
+  .intro__title { font-size: 1.18rem; }
+  .intro__text { font-size: .84rem; line-height: 1.45; }
+  .link { padding: .8rem 1rem; }
+  .social { width: 2.8rem; height: 2.8rem; }
+  .brand--xl .brand__mark { width: min(13.5rem, 78%); }
+  .brand--xxl .brand__mark { width: min(13rem, 68%); }
+  .mascot { width: clamp(3.4rem, 15vw, 4.4rem); }
+  .hero--cream .hero__in { padding-top: calc(1.1rem + env(safe-area-inset-top)); }
+  .hero--cover .hero__in {
+    padding-top: calc(1.2rem + env(safe-area-inset-top));
+    padding-bottom: 1rem;
+  }
+  .hero--cream .mascot--cream, .hero--cover .mascot--cover { margin-top: .6rem; }
+  .brand__kicker { margin-top: .3rem; letter-spacing: .28em; }
+}
+/* The shortest phones in a browser with full chrome. The @handle line goes
+   — the two icons beside it already lead to the same accounts — and the
+   rhythm minimums drop. Every word of the copy still survives. */
+@media (max-height: 580px) {
+  :root {
+    --sp-related: .4rem;
+    --sp-block: .8rem;
+    --sp-section: .95rem;
+    --sp-major: 1rem;
+  }
+  .handle { display: none; }
+  .link { padding: .72rem 1rem; }
+  .social { width: 2.65rem; height: 2.65rem; }
+  .signoff { font-size: .84rem; }
+}
+
 @media (min-width: 34rem) {
   :root { --pad: 1.6rem; }
   .hero--band, .hero--cover { border-radius: 0 0 1.9rem 1.9rem; }
@@ -682,6 +738,6 @@ a { color: inherit; text-decoration: none; }
 }
 
 @media print {
-  .theme-toggle, .topbar, .grain, .skip, .pagepill, .lb, .menuhint { display: none !important; }
+  .themeToggle, .topbar, .grain, .skip, .pagepill, .lb, .menuhint { display: none !important; }
   .page { break-inside: avoid; border: 0; box-shadow: none; }
 }

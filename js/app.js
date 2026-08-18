@@ -127,6 +127,17 @@
   /* ---------------------------------------------------------------- *
    *  Shared chrome
    * ---------------------------------------------------------------- */
+  /* Sits inline — in the socials row on home, in the topbar elsewhere —
+     rather than floating over the bottom-right corner, which used to
+     reserve space the home page could not spare. */
+  const themeBtn = (cls) =>
+    '<button class="' + cls + ' themeToggle" type="button" data-theme-toggle ' +
+      'aria-label="Switch between light and dark" title="Switch between light and dark">' +
+      '<span class="theme-ico" aria-hidden="true">' +
+        '<span class="theme-ico__sun"></span><span class="theme-ico__moon"></span>' +
+      '</span>' +
+    '</button>';
+
   function topbarHtml(title, sub, extra) {
     return (
       '<div class="topbar" id="topbar">' +
@@ -167,21 +178,30 @@
       ))
       .join('');
 
+    /* One viewport-tall column: hero and links at the top, the social and
+       sign-off cluster pushed to the bottom by margin-top:auto. Tall
+       phones get generous space, short ones compress instead of
+       overflowing. */
     return (
-      HERO_FN[heroChoice()]() +
-      '<div class="wrap">' +
-        '<nav class="links stack" aria-label="Main links">' + links + '</nav>' +
-        '<div class="socials rise" style="--i:8">' +
-          '<a class="social" href="' + esc(LINKS.instagram) + '" target="_blank" ' +
-            'rel="noopener noreferrer" aria-label="Instagram">' + SOCIAL.instagram + '</a>' +
-          '<a class="social" href="' + esc(LINKS.tiktok) + '" target="_blank" ' +
-            'rel="noopener noreferrer" aria-label="TikTok">' + SOCIAL.tiktok + '</a>' +
+      '<div class="home">' +
+        HERO_FN[heroChoice()]() +
+        '<div class="wrap home__links">' +
+          '<nav class="links stack" aria-label="Main links">' + links + '</nav>' +
         '</div>' +
-        '<p class="handle rise" style="--i:9">' + esc(LINKS.handle) + '</p>' +
-        '<footer class="signoff rise" style="--i:10">' +
-          '<strong>' + esc(SITE.signoff[0]) + '</strong>' +
-          esc(SITE.signoff[1]) +
-        '</footer>' +
+        '<div class="wrap home__foot">' +
+          '<div class="socials rise" style="--i:8">' +
+            '<a class="social" href="' + esc(LINKS.instagram) + '" target="_blank" ' +
+              'rel="noopener noreferrer" aria-label="Instagram">' + SOCIAL.instagram + '</a>' +
+            '<a class="social" href="' + esc(LINKS.tiktok) + '" target="_blank" ' +
+              'rel="noopener noreferrer" aria-label="TikTok">' + SOCIAL.tiktok + '</a>' +
+            themeBtn('social') +
+          '</div>' +
+          '<p class="handle rise" style="--i:9">' + esc(LINKS.handle) + '</p>' +
+          '<footer class="signoff rise" style="--i:10">' +
+            '<strong>' + esc(SITE.signoff[0]) + '</strong>' +
+            esc(SITE.signoff[1]) +
+          '</footer>' +
+        '</div>' +
       '</div>'
     );
   }
@@ -213,8 +233,8 @@
       .join('');
 
     return (
-      topbarHtml('Branches', BRANCHES.length + ' locations') +
-      '<div class="wrap wrap--wide">' +
+      topbarHtml('Branches', BRANCHES.length + ' locations', themeBtn('iconbtn')) +
+      '<div class="wrap wrap--wide subpage">' +
         '<div class="pagehead rise">' +
           '<h1 class="pagehead__title">find us</h1>' +
           '<p class="pagehead__lede">Every branch, with directions and its own menu.</p>' +
@@ -251,9 +271,9 @@
       topbarHtml(branch.name, branch.place,
         '<a class="iconbtn" href="' + esc(menu.pdf) + '" target="_blank" rel="noopener" ' +
           'aria-label="Open the original ' + originalKind(menu) + '">' +
-          icon('download', { sw: 2 }) + '</a>') +
+          icon('download', { sw: 2 }) + '</a>' + themeBtn('iconbtn')) +
 
-      '<div class="wrap wrap--wide">' +
+      '<div class="wrap wrap--wide subpage">' +
         '<p class="menuhint rise">' + icon('zoom', { sw: 2 }) +
           '<span>Tap any page to zoom' + (wide ? ' — this one is a wide spread' : '') +
           '.</span></p>' +
@@ -509,11 +529,14 @@
     try { saved = localStorage.getItem(KEY); } catch (e) { /* private mode */ }
     if (saved === 'dark') root.setAttribute('data-theme', 'dark');
 
-    document.getElementById('themeToggle').addEventListener('click', () => {
+    /* The button is re-rendered with every view, so listen on the document
+       instead of binding to one element. */
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('[data-theme-toggle]')) return;
       const dark = root.getAttribute('data-theme') !== 'dark';
       if (dark) root.setAttribute('data-theme', 'dark');
       else root.removeAttribute('data-theme');
-      try { localStorage.setItem(KEY, dark ? 'dark' : 'light'); } catch (e) { /* ignore */ }
+      try { localStorage.setItem(KEY, dark ? 'dark' : 'light'); } catch (err) { /* ignore */ }
       const meta = document.querySelector('meta[name="theme-color"]');
       if (meta) meta.setAttribute('content', dark ? '#1A1917' : '#F2F0E2');
     });
