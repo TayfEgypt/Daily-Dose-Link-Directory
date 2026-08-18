@@ -10,13 +10,6 @@
 
   const SITE = {
     kicker: 'Coffee Roasters',
-    /* the booklet cover poem, word for word */
-    poem: [
-      'your dose of happiness, your dose of love',
-      'your tender song, of a morning dove',
-      'your side of a story, upon the side you chose',
-      'your daily dose',
-    ],
     about:
       'What started as a cozy corner in El Gouna back in 2022 has grown into ' +
       'more than just a coffee spot—it’s your daily escape. Where specialty ' +
@@ -40,20 +33,23 @@
    *        instead of a directions button.
    * ---------------------------------------------------------------- */
   const BRANCHES = [
-    { id: 'gouna',    name: 'Abu Tig Marina',  place: 'El Gouna',      menu: 'gouna',
-      maps: 'https://maps.app.goo.gl/qZ8e1FSmnMoZ8xxM9' },
-    { id: 'mivida',   name: 'Mivida',          place: 'New Cairo',     menu: 'cairo',
+    /* Cairo */
+    { id: 'mivida',   name: 'Mivida',         place: 'Cairo',    menu: 'cairo',
       maps: 'https://maps.app.goo.gl/QeWSwuphXJHVDeLS9' },
-    { id: 'driive',   name: 'The Driive',      place: '',              menu: 'kiosk',
+    { id: 'driive',   name: 'The Driive',     place: 'Cairo',    menu: 'kiosk',
       maps: 'https://maps.app.goo.gl/uTDzv42kKGwhGaCH8' },
-    { id: 'owest',    name: 'O West',          place: '',              menu: 'kiosk',
+    { id: 'owest',    name: 'O West',         place: 'Cairo',    menu: 'kiosk',
       maps: 'https://maps.app.goo.gl/LSo5REE3WjPdb9Bv6' },
-    { id: 'lavista',  name: 'La Vista',        place: 'Sahel',         menu: 'lavista',
+    /* El Gouna */
+    { id: 'gouna',    name: 'Abu Tig Marina', place: 'El Gouna', menu: 'gouna',
+      maps: 'https://maps.app.goo.gl/qZ8e1FSmnMoZ8xxM9' },
+    /* Sahel */
+    { id: 'lavista',  name: 'La Vista',       place: 'Sahel',    menu: 'lavista',
       maps: 'https://maps.app.goo.gl/9W58a8pvPcG6a87GA' },
-    { id: 'playa',    name: 'Playa',           place: 'Sahel',         menu: 'playa',
+    { id: 'playa',    name: 'Playa',          place: 'Sahel',    menu: 'playa',
       maps: 'https://maps.app.goo.gl/zfbdD4a1FnQAdwSm7' },
     /* Mountain View: maps link still to come. */
-    { id: 'mountain', name: 'Mountain View',   place: 'Sahel',         menu: 'mountain' },
+    { id: 'mountain', name: 'Mountain View',  place: 'Sahel',    menu: 'mountain' },
   ];
 
   global.SITE = SITE;

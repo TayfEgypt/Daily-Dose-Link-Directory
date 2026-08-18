@@ -159,7 +159,7 @@ a { color: inherit; text-decoration: none; }
   animation-delay: calc(var(--i, 0) * 62ms);
 }
 @media (prefers-reduced-motion: reduce) {
-  .rise, .brand, .tagline__row, .poem { animation: fade .01s both; }
+  .rise, .brand { animation: fade .01s both; }
   .mascot { animation: none; }
 }
 
@@ -179,45 +179,17 @@ a { color: inherit; text-decoration: none; }
 .brand { animation: rise .8s var(--ease-out) both .1s; }
 .brand__mark { width: min(12rem, 100%); }
 .brand--xl .brand__mark { width: min(17.5rem, 88%); }
+.brand--xxl .brand__mark { width: min(20rem, 82%); }
+.brand--center {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+}
 .brand__kicker {
   display: block; margin-top: .5rem;
   font-size: .66rem; font-weight: 600;
   letter-spacing: .34em; text-transform: uppercase;
   opacity: .66;
 }
-
-/* --- booklet tagline --------------------------------------------- */
-.tagline {
-  display: flex; flex-direction: column; gap: .1em;
-  font-family: 'LeMonde', serif; font-weight: 400;
-  /* sized so the longest row keeps a margin inside the gutters at 320px */
-  font-size: clamp(1.85rem, 11.1vw, 3.3rem);
-  line-height: .98; letter-spacing: .012em;
-  text-transform: uppercase;
-}
-.tagline--sm { font-size: clamp(1.35rem, 7.6vw, 2.2rem); }
-.tagline--ink { color: var(--fg); }
-.tagline__row {
-  display: flex; align-items: center; gap: .26em; min-width: 0;
-  animation: rise .8s var(--ease-out) both;
-  animation-delay: calc(.2s + var(--i) * 110ms);
-}
-.tagline__row--3 { justify-content: flex-end; }
-.tagline--center .tagline__row { justify-content: center; }
-.tagline__mark { flex: none; width: .9em; height: .9em; }
-.tagline__mark svg { width: 100%; height: 100%; }
-
-/* --- poem -------------------------------------------------------- */
-.poem {
-  margin-top: 1.6rem;
-  font-family: 'LeMonde', serif; font-style: italic;
-  font-size: clamp(.9rem, 3.8vw, 1rem); line-height: 1.5;
-  color: color-mix(in srgb, var(--paper) 84%, var(--ink-deep));
-  animation: rise .8s var(--ease-out) both .55s;
-}
-.poem span { display: block; }
-.poem--ink { color: var(--fg-soft); }
-.poem--center { text-align: center; }
 
 /* --- mascot ------------------------------------------------------ */
 .mascot {
@@ -247,24 +219,22 @@ a { color: inherit; text-decoration: none; }
 }
 .hero--band .brand { flex: 1 1 auto; min-width: 0; }
 .hero--band .mascot--band { flex: none; width: clamp(3.8rem, 18vw, 5.2rem); }
-.hero--band + .wrap .tagline { margin-top: .4rem; }
-.hero--band + .wrap .poem { margin-top: 1.4rem; }
 
 /* --- variant B: no green panel ----------------------------------- */
 .hero--cream .hero__in {
-  padding-top: calc(2.6rem + env(safe-area-inset-top));
+  padding-top: calc(3rem + env(safe-area-inset-top));
+  padding-bottom: .6rem;
   text-align: center;
 }
-.hero--cream .brand { display: flex; flex-direction: column; align-items: center; }
-.hero--cream .tagline { margin-top: 1.9rem; }
-.hero--cream .mascot--cream { margin: 1.5rem auto 0; }
+.hero--cream .mascot--cream { margin: 1.6rem auto 0; }
 
-/* --- variant C: full green cover, logo leads it ------------------ */
+/* --- variant C: generous green cover ---------------------------- */
 .hero--cover {
   background: var(--ink-deep);
   color: var(--paper);
   border-radius: 0 0 var(--r) var(--r);
   overflow: hidden;
+  margin-bottom: 1.9rem;
 }
 .hero--cover::before {
   content: '';
@@ -276,11 +246,11 @@ a { color: inherit; text-decoration: none; }
       color-mix(in srgb, var(--orange) 20%, transparent), transparent 70%);
 }
 .hero--cover .hero__in {
-  padding-top: calc(2.3rem + env(safe-area-inset-top));
-  padding-bottom: 1.8rem;
+  padding-top: calc(3.4rem + env(safe-area-inset-top));
+  padding-bottom: 2.4rem;
+  text-align: center;
 }
-.hero--cover .tagline { margin-top: 1.8rem; }
-.hero--cover .mascot--cover { margin-left: auto; margin-top: .6rem; }
+.hero--cover .mascot--cover { margin: 1.9rem auto 0; }
 
 /* ------------------------------------------------------------------ *
    6. Shell

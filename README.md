@@ -99,11 +99,11 @@ sizes are picked up automatically — no other file needs editing.
 Everything routine is in **`js/data.js`**:
 
 - `BRANCHES` — name, place, Google Maps link, and which artwork the branch
-  serves, as one flat ordered list. Add or remove one here and every screen
-  follows. Leave `maps` off a branch and its card shows "Location soon"
+  serves, as one flat list rendered in array order (Cairo, then El Gouna, then
+  Sahel). Add or remove one here and every screen follows. Leave `maps` off a branch and its card shows "Location soon"
   instead of a directions button.
 - `LINKS` — Instagram, TikTok, the review form.
-- `SITE` — the cover poem, the about paragraph, the sign-off.
+- `SITE` — the kicker under the logo, the about paragraph, the sign-off.
 
 ---
 
@@ -114,20 +114,21 @@ place. Append the query to the URL:
 
 | URL | Treatment |
 |---|---|
-| `?hero=band` (default) | Slim green band holding just the logo; tagline and poem below on cream |
+| `?hero=band` (default) | Slim green band, logo and mascot side by side — smallest footprint |
 | `?hero=cream` | No green panel at all; large green logo centred on cream |
-| `?hero=cover` | Full green cover, logo leading it with a smaller tagline |
+| `?hero=cover` | Generous green cover, logo centred with the mascot beneath |
 
-Once one is chosen, keep its function in `app.js`, delete the other two along
-with their `.hero--*` blocks in the CSS, and drop the `heroChoice()` switch.
-The unused `logo-green.webp` / `mascot-green.webp` (or the cream pair) can go
-too, depending on which survives.
+All three show only the logo, kicker and mascot — the booklet tagline and poem
+were removed. Once one is chosen, keep its function in `app.js`, delete the
+other two along with their `.hero--*` blocks in the CSS, and drop the
+`heroChoice()` switch. The unused `logo-green.webp` / `mascot-green.webp` (or
+the cream pair) can go too, depending on which survives.
 
 ## Design notes
 
 The printed booklet is the design system, so the site reads as the same object:
-cream paper, green ink, the brand's own LeMonde Livre italic for display type,
-and the booklet's hand-drawn markers redrawn as SVG.
+cream paper, green ink, and the brand's own LeMonde Livre italic for display
+type.
 
 - **Colours** are sampled from the source artwork: paper `#F2F0E2`, ink
   `#1B582C`, cover green `#1C4425`, orange `#F68F43`.

@@ -71,32 +71,6 @@
     );
   }
 
-  /** The booklet tagline: THIS ◦ MUST BE ◦ THE PLACE, marks inline. */
-  function taglineBlock(cls) {
-    const rows = [
-      { words: ['THIS', 'MUST'], mark: 'cup' },
-      { words: ['BE', 'THE'], mark: 'kettle' },
-      { words: ['PLACE'], mark: 'pancakes', end: true },
-    ];
-    return (
-      '<div class="tagline ' + (cls || '') + '">' +
-        rows.map((r, i) => {
-          const mark = '<span class="tagline__mark">' + icon(r.mark, { sw: 1.4 }) + '</span>';
-          return '<div class="tagline__row tagline__row--' + (i + 1) + '" style="--i:' + i + '">' +
-            (r.end
-              ? mark + '<span>' + r.words[0] + '</span>'
-              : '<span>' + r.words[0] + '</span>' + mark + '<span>' + r.words[1] + '</span>') +
-            '</div>';
-        }).join('') +
-      '</div>'
-    );
-  }
-
-  const poemBlock = (cls) =>
-    '<p class="poem ' + (cls || '') + '">' +
-      SITE.poem.map((l) => '<span>' + esc(l) + '</span>').join('') +
-    '</p>';
-
   const mascotImg = (ink, cls) =>
     '<img class="mascot ' + (cls || '') + '" width="702" height="640" alt="" aria-hidden="true" ' +
     'fetchpriority="high" decoding="async" src="assets/img/' +
@@ -104,7 +78,7 @@
 
   const aboutBlock = () => '<p class="about rise" style="--i:4">' + esc(SITE.about) + '</p>';
 
-  /* --- variant A: slim green band, logo dominant ------------------- */
+  /* --- variant A: slim green band, logo and mascot side by side ---- */
   function heroBand() {
     return (
       '<header class="hero hero--band">' +
@@ -113,22 +87,16 @@
           mascotImg('cream', 'mascot--band') +
         '</div>' +
       '</header>' +
-      '<div class="wrap">' +
-        taglineBlock('tagline--ink') +
-        poemBlock('poem--ink') +
-        aboutBlock() +
-      '</div>'
+      '<div class="wrap">' + aboutBlock() + '</div>'
     );
   }
 
-  /* --- variant B: no green panel ----------------------------------- */
+  /* --- variant B: no green panel, green logo on cream -------------- */
   function heroCream() {
     return (
       '<header class="hero hero--cream">' +
         '<div class="hero__in">' +
-          logoBlock('green', 'brand--xl') +
-          taglineBlock('tagline--ink tagline--center') +
-          poemBlock('poem--ink poem--center') +
+          logoBlock('green', 'brand--xxl brand--center') +
           mascotImg('green', 'mascot--cream') +
         '</div>' +
       '</header>' +
@@ -136,14 +104,12 @@
     );
   }
 
-  /* --- variant C: full green cover, logo leads it ------------------ */
+  /* --- variant C: generous green cover, logo centred on it --------- */
   function heroCover() {
     return (
       '<header class="hero hero--cover">' +
         '<div class="hero__in">' +
-          logoBlock('cream', 'brand--xl') +
-          taglineBlock('tagline--sm') +
-          poemBlock() +
+          logoBlock('cream', 'brand--xxl brand--center') +
           mascotImg('cream', 'mascot--cover') +
         '</div>' +
       '</header>' +
