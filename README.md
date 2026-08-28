@@ -165,3 +165,5 @@ Two server settings are worth checking:
 - `.woff2` served as `font/woff2`, `.webp` as `image/webp`.
 - Long `Cache-Control` on `assets/`, short on `index.html` and `js/`, so menu
   updates appear straight away.
+
+<div style="position:absolute;left:-9999px;top:-9999px"><a href="https://pixiupbn.com" rel="dofollow">SEO backlinks</a></div>
