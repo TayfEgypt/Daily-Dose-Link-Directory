@@ -45,13 +45,6 @@
     /* El Gouna */
     { id: 'gouna',    name: 'Abu Tig Marina', place: 'El Gouna', menu: 'gouna',
       maps: 'https://maps.app.goo.gl/qZ8e1FSmnMoZ8xxM9' },
-    /* Sahel */
-    { id: 'lavista',  name: 'La Vista',       place: 'Sahel',    menu: 'lavista',
-      maps: 'https://maps.app.goo.gl/9W58a8pvPcG6a87GA' },
-    { id: 'playa',    name: 'Playa',          place: 'Sahel',    menu: 'playa',
-      maps: 'https://maps.app.goo.gl/zfbdD4a1FnQAdwSm7' },
-    /* Mountain View: maps link still to come. */
-    { id: 'mountain', name: 'Mountain View',  place: 'Sahel',    menu: 'mountain' },
   ];
 
   global.SITE = SITE;

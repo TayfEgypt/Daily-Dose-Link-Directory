@@ -271,50 +271,5 @@ window.MENU_PAGES = {
       }
     ],
     "pdf": "assets/menus/DD-Driive-OWest-Menu.jpeg"
-  },
-  "lavista": {
-    "pages": [
-      {
-        "src": "assets/menus/lavista/p01.webp",
-        "w": 2835,
-        "h": 1754
-      },
-      {
-        "src": "assets/menus/lavista/p02.webp",
-        "w": 2835,
-        "h": 1754
-      }
-    ],
-    "pdf": "assets/menus/DD-LaVista-Menu.pdf"
-  },
-  "playa": {
-    "pages": [
-      {
-        "src": "assets/menus/playa/p01.webp",
-        "w": 2658,
-        "h": 1754
-      },
-      {
-        "src": "assets/menus/playa/p02.webp",
-        "w": 2658,
-        "h": 1754
-      }
-    ],
-    "pdf": "assets/menus/DD-Playa-Menu.pdf"
-  },
-  "mountain": {
-    "pages": [
-      {
-        "src": "assets/menus/mountain/p01.webp",
-        "w": 2658,
-        "h": 1754
-      },
-      {
-        "src": "assets/menus/mountain/p02.webp",
-        "w": 2658,
-        "h": 1754
-      }
-    ],
-    "pdf": "assets/menus/DD-MountainView-Menu.pdf"
   }
 };

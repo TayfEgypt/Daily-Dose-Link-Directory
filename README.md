@@ -47,7 +47,7 @@ Hash-based, so every view is deep-linkable and safe on a QR code:
 |---|---|
 | `#/` | Home — the link tree |
 | `#/branches` | Every branch: directions + menu on one card |
-| `#/menu/<branch>` | That branch's menu. Ids: `gouna`, `mivida`, `driive`, `owest`, `lavista`, `playa`, `mountain` |
+| `#/menu/<branch>` | That branch's menu. Ids: `mivida`, `driive`, `owest`, `gouna` |
 
 `#/locations` and `#/menus` from the earlier two-tab layout both redirect to
 `#/branches`, so any link already shared keeps working.
@@ -62,20 +62,16 @@ aspect ratio, and the untouched original stays downloadable via the button in
 the menu screen's header. Tapping a page opens a full-screen viewer that zooms
 as deep as the source artwork allows.
 
-Six sets of artwork cover the seven branches:
+Three sets of artwork cover the four branches:
 
 | Artwork | Branches |
 |---|---|
-| `DD Gouna Booklet (Gouna branch).pdf` | Abu Tig Marina |
 | `DD Cairo Booklet (Mivida and Majarrah branches).pdf` | Mivida |
 | `DD Menu (The Drive and O West branches).jpeg` | The Driive, O West |
-| `Sahel - La Vista menu (48cmx29.7cm).pdf` | La Vista |
-| `Sahel - Playa menu (45cmx29.7cm).pdf` | Playa |
-| `Sahel - Mountain view menu (45cmx29.7cm).pdf` | Mountain View |
+| `DD Gouna Booklet (Gouna branch).pdf` | Abu Tig Marina |
 
-The Sahel menus are large-format landscape spreads rather than booklets, so
-the viewer lets zoom go deeper on them — far enough to reach the source
-resolution, since a 48 cm spread needs it to be readable on a phone.
+Zoom scales to the artwork rather than a fixed ceiling, so a dense page can be
+opened far enough to reach its source resolution.
 
 ### Updating a menu
 
@@ -99,9 +95,9 @@ sizes are picked up automatically — no other file needs editing.
 Everything routine is in **`js/data.js`**:
 
 - `BRANCHES` — name, place, Google Maps link, and which artwork the branch
-  serves, as one flat list rendered in array order (Cairo, then El Gouna, then
-  Sahel). Add or remove one here and every screen follows. Leave `maps` off a branch and its card shows "Location soon"
-  instead of a directions button.
+  serves, as one flat list rendered in array order (Cairo, then El Gouna). Add
+  or remove one here and every screen follows. Leave `maps` off a branch and
+  its card shows "Location soon" instead of a directions button.
 - `LINKS` — Instagram, TikTok, the review form.
 - `SITE` — the kicker under the logo, the about paragraph, the sign-off.
 
