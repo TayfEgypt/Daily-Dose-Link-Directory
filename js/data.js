@@ -28,26 +28,34 @@
   };
 
   /* ---------------------------------------------------------------- *
-   *  Branches — one flat list, shown in this order.
+   *  Branches — grouped under a city heading on screen.
    *
+   *  city  the heading a branch sits under; REGION_ORDER sets the order
+   *        the headings appear in, and branches follow array order
+   *        within their city
    *  menu  which set of artwork the branch serves (key in MENU_PAGES)
    *  maps  Google Maps link. Omit it and the card shows "Location soon"
    *        instead of a directions button.
    * ---------------------------------------------------------------- */
   const BRANCHES = [
-    /* Cairo */
-    { id: 'mivida',   name: 'Mivida',         place: 'Cairo',    menu: 'cairo',
-      maps: 'https://maps.app.goo.gl/QeWSwuphXJHVDeLS9' },
-    { id: 'driive',   name: 'The Driive',     place: 'Cairo',    menu: 'kiosk',
-      maps: 'https://maps.app.goo.gl/uTDzv42kKGwhGaCH8' },
-    { id: 'owest',    name: 'O West',         place: 'Cairo',    menu: 'kiosk',
-      maps: 'https://maps.app.goo.gl/LSo5REE3WjPdb9Bv6' },
-    /* El Gouna */
-    { id: 'gouna',    name: 'Abu Tig Marina', place: 'El Gouna', menu: 'gouna',
+    { id: 'gouna',  name: 'Abu Tig Marina', city: 'El Gouna', menu: 'gouna',
       maps: 'https://maps.app.goo.gl/qZ8e1FSmnMoZ8xxM9' },
+    { id: 'mivida', name: 'Mivida',         city: 'Cairo',    menu: 'cairo',
+      maps: 'https://maps.app.goo.gl/QeWSwuphXJHVDeLS9' },
+    { id: 'driive', name: 'The Driive',     city: 'Cairo',    menu: 'kiosk',
+      maps: 'https://maps.app.goo.gl/uTDzv42kKGwhGaCH8' },
+    { id: 'owest',  name: 'O West',         city: 'Cairo',    menu: 'kiosk',
+      maps: 'https://maps.app.goo.gl/LSo5REE3WjPdb9Bv6' },
+    { id: 'balad',  name: 'West El Balad',  city: 'Cairo',    menu: 'downtown',
+      maps: 'https://maps.app.goo.gl/maiARtv5r14a2a4c7' },
   ];
+
+  /* The order the city headings appear in. A city left out of this list
+     is not shown, so adding one here is what puts it on the page. */
+  const REGION_ORDER = ['El Gouna', 'Cairo'];
 
   global.SITE = SITE;
   global.LINKS = LINKS;
   global.BRANCHES = BRANCHES;
+  global.REGION_ORDER = REGION_ORDER;
 })(window);

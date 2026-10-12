@@ -271,5 +271,20 @@ window.MENU_PAGES = {
       }
     ],
     "pdf": "assets/menus/DD-Driive-OWest-Menu.jpeg"
+  },
+  "downtown": {
+    "pages": [
+      {
+        "src": "assets/menus/downtown/p01.webp",
+        "w": 1754,
+        "h": 1241
+      },
+      {
+        "src": "assets/menus/downtown/p02.webp",
+        "w": 1754,
+        "h": 1241
+      }
+    ],
+    "pdf": "assets/menus/DD-WestElBalad-Menu.pdf"
   }
 };

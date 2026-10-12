@@ -397,9 +397,30 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ------------------------------------------------------------------ *
-   10. Branch cards — one flat list, directions + menu on each
+   10. Branch cards — grouped under a heading per city
  * ------------------------------------------------------------------ */
-.branches { margin-top: 1.6rem; }
+.branches { margin-top: 1.4rem; }
+
+/* city heading: italic serif name, a rule filling the gap, a count */
+.city + .city { margin-top: var(--sp-section); }
+.city__name {
+  display: flex; align-items: center; gap: .8rem;
+  margin-bottom: .85rem;
+  font-family: 'LeMonde', serif; font-style: italic; font-weight: 400;
+  font-size: 1.32rem; line-height: 1.2;
+  color: var(--fg);
+}
+.city__name::after {
+  content: ''; order: 1;
+  flex: 1 1 auto; height: 1px;
+  background: var(--rule);
+}
+.city__count {
+  order: 2; flex: none;
+  font-family: 'Figtree', sans-serif; font-style: normal;
+  font-size: .72rem; font-weight: 600; letter-spacing: .06em;
+  color: var(--fg-faint);
+}
 
 .branch {
   padding: 1.05rem;
@@ -413,16 +434,10 @@ a { color: inherit; text-decoration: none; }
 .branch__head { display: flex; align-items: center; gap: .9rem; }
 .branch__ico { flex: none; width: 1.6rem; height: 1.6rem; }
 .branch__ico svg { width: 100%; height: 100%; }
-.branch__txt { flex: 1 1 auto; min-width: 0; }
 .branch__name {
-  display: block;
+  flex: 1 1 auto; min-width: 0;
   font-size: .84rem; font-weight: 700;
   text-transform: uppercase; letter-spacing: .085em;
-}
-.branch__place {
-  display: block; margin-top: .16rem;
-  font-family: 'LeMonde', serif; font-style: italic;
-  font-size: .8rem; color: var(--fg-faint);
 }
 .branch__acts { display: flex; gap: .5rem; margin-top: .9rem; }
 

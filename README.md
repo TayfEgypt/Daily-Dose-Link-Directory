@@ -48,7 +48,7 @@ Hash-based, so every view is deep-linkable and safe on a QR code:
 |---|---|
 | `#/` | Home — the link tree |
 | `#/branches` | Every branch: directions + menu on one card |
-| `#/menu/<branch>` | That branch's menu. Ids: `mivida`, `driive`, `owest`, `gouna` |
+| `#/menu/<branch>` | That branch's menu. Ids: `gouna`, `mivida`, `driive`, `owest`, `balad` |
 
 `#/locations` and `#/menus` from the earlier two-tab layout both redirect to
 `#/branches`, so any link already shared keeps working.
@@ -63,13 +63,14 @@ aspect ratio, and the untouched original stays downloadable via the button in
 the menu screen's header. Tapping a page opens a full-screen viewer that zooms
 as deep as the source artwork allows.
 
-Three sets of artwork cover the four branches:
+Four sets of artwork cover the five branches:
 
 | Artwork | Branches |
 |---|---|
+| `DD Gouna Booklet (Gouna branch).pdf` | Abu Tig Marina |
 | `DD Cairo Booklet (Mivida and Majarrah branches).pdf` | Mivida |
 | `DD Menu (The Drive and O West branches).jpeg` | The Driive, O West |
-| `DD Gouna Booklet (Gouna branch).pdf` | Abu Tig Marina |
+| `Downtown A4 menu.pdf` | West El Balad |
 
 Zoom scales to the artwork rather than a fixed ceiling, so a dense page can be
 opened far enough to reach its source resolution.
@@ -95,10 +96,11 @@ sizes are picked up automatically — no other file needs editing.
 
 Everything routine is in **`js/data.js`**:
 
-- `BRANCHES` — name, place, Google Maps link, and which artwork the branch
-  serves, as one flat list rendered in array order (Cairo, then El Gouna). Add
-  or remove one here and every screen follows. Leave `maps` off a branch and
-  its card shows "Location soon" instead of a directions button.
+- `BRANCHES` — name, city, Google Maps link, and which artwork the branch
+  serves. Cards are grouped under a heading per city; `REGION_ORDER` sets the
+  order the headings appear in and branches follow array order within a city.
+  A city missing from `REGION_ORDER` is not shown at all. Leave `maps` off a
+  branch and its card shows "Location soon" instead of a directions button.
 - `LINKS` — Instagram, TikTok, the review form.
 - `SITE` — the kicker under the logo, the about paragraph, the sign-off.
 

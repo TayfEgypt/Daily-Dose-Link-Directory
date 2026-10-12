@@ -159,28 +159,40 @@
   }
 
   /* ---------------------------------------------------------------- *
-   *  View: branches — one flat list, directions + menu on each card
+   *  View: branches — grouped under a heading per city
    * ---------------------------------------------------------------- */
+  function branchCard(b, i) {
+    return (
+      '<div class="branch rise" style="--i:' + i + '">' +
+        '<div class="branch__head">' +
+          '<span class="branch__ico">' + icon('pin', { ink: 'orange' }) + '</span>' +
+          '<span class="branch__name">' + esc(b.name) + '</span>' +
+        '</div>' +
+        '<div class="branch__acts">' +
+          (b.maps
+            ? '<a class="btn btn--solid" href="' + esc(b.maps) + '" target="_blank" ' +
+                'rel="noopener noreferrer">' + icon('pin', { sw: 2 }) + 'Directions</a>'
+            : '<span class="btn btn--muted">' + icon('pin', { sw: 2 }) + 'Location soon</span>') +
+          '<a class="btn" href="#/menu/' + esc(b.id) + '">' +
+            icon('book', { sw: 2 }) + 'Menu</a>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
   function viewBranches() {
-    const cards = BRANCHES
-      .map((b, i) => (
-        '<div class="branch rise" style="--i:' + i + '">' +
-          '<div class="branch__head">' +
-            '<span class="branch__ico">' + icon('pin', { ink: 'orange' }) + '</span>' +
-            '<span class="branch__txt">' +
-              '<span class="branch__name">' + esc(b.name) + '</span>' +
-              (b.place ? '<span class="branch__place">' + esc(b.place) + '</span>' : '') +
-            '</span>' +
-          '</div>' +
-          '<div class="branch__acts">' +
-            (b.maps
-              ? '<a class="btn btn--solid" href="' + esc(b.maps) + '" target="_blank" ' +
-                  'rel="noopener noreferrer">' + icon('pin', { sw: 2 }) + 'Directions</a>'
-              : '<span class="btn btn--muted">' + icon('pin', { sw: 2 }) + 'Location soon</span>') +
-            '<a class="btn" href="#/menu/' + esc(b.id) + '">' +
-              icon('book', { sw: 2 }) + 'Menu</a>' +
-          '</div>' +
-        '</div>'
+    let i = 0;
+    /* A city with no branches simply doesn't appear. */
+    const groups = REGION_ORDER
+      .map((city) => ({ city: city, list: BRANCHES.filter((b) => b.city === city) }))
+      .filter((g) => g.list.length)
+      .map((g) => (
+        '<section class="city">' +
+          '<h2 class="city__name">' + esc(g.city) +
+            '<span class="city__count nums">' + g.list.length + '</span>' +
+          '</h2>' +
+          '<div class="city__list">' + g.list.map((b) => branchCard(b, i++)).join('') + '</div>' +
+        '</section>'
       ))
       .join('');
 
@@ -191,7 +203,7 @@
           '<h1 class="pagehead__title">find us</h1>' +
           '<p class="pagehead__lede">Every branch, with directions and its own menu.</p>' +
         '</div>' +
-        '<div class="branches">' + cards + '</div>' +
+        '<div class="branches">' + groups + '</div>' +
       '</div>'
     );
   }
@@ -220,7 +232,7 @@
       .join('');
 
     return (
-      topbarHtml(branch.name, branch.place,
+      topbarHtml(branch.name, branch.city,
         '<a class="iconbtn" href="' + esc(menu.pdf) + '" target="_blank" rel="noopener" ' +
           'aria-label="Open the original ' + originalKind(menu) + '">' +
           icon('download', { sw: 2 }) + '</a>' + themeBtn('iconbtn')) +

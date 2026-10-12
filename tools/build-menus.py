@@ -43,10 +43,11 @@ DPI = 150        # 827x1746 px for a 5.5x11.6in page — crisp on retina
 QUALITY = 80
 
 SOURCES = [
-    # key,      source filename,                                        download name
-    ('gouna',   'DD Gouna Booklet (Gouna branch).pdf',                  'DD-Gouna-Menu.pdf'),
-    ('cairo',   'DD Cairo Booklet (Mivida and Majarrah branches).pdf',  'DD-Cairo-Menu.pdf'),
-    ('kiosk',   'DD Menu (The Drive and O West branches).jpeg',         'DD-Driive-OWest-Menu.jpeg'),
+    # key,       source filename,                                        download name
+    ('gouna',    'DD Gouna Booklet (Gouna branch).pdf',                  'DD-Gouna-Menu.pdf'),
+    ('cairo',    'DD Cairo Booklet (Mivida and Majarrah branches).pdf',  'DD-Cairo-Menu.pdf'),
+    ('kiosk',    'DD Menu (The Drive and O West branches).jpeg',         'DD-Driive-OWest-Menu.jpeg'),
+    ('downtown', 'Downtown A4 menu.pdf',                                 'DD-WestElBalad-Menu.pdf'),
 ]
 
 
